@@ -1,0 +1,19 @@
+# Virtual environment
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyc
+
+# Jupyter Notebook files
+.ipynb_checkpoints/
+
+# Collected data files (optional, if you don't want to track data files in Git)
+data/
+
+# OS generated files
+.DS_Store
+Thumbs.db
