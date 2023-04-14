@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import csv
 import json
 import os
+from .models import PlayerData
 
 
 team = input('What team? ')
@@ -54,4 +55,36 @@ with open(json_output_path, 'w') as jsonfile:
     json.dump(data, jsonfile)
     
 
-print('success')
+# save data to database
+
+for row in data:
+    player_data = PlayerData(
+        name=row['name'],
+        age=row['age'],
+        games=row['games'],
+        games_started=row['games_started'],
+        minutes_pg=row['minutes_pg'],
+        field_goals=row['field_goals'],
+        field_attempts=row['field_attempts'],
+        field_percent=row['field_percent'],
+        three_fg=row['three_fg'],
+        three_attempts=row['three_attempts'],
+        three_percent=row['three_percent'],
+        two_fg=row['two_fg'],
+        two_attempts=row['two_attempts'],
+        two_percent=row['two_percent'],
+        effect_fg_percent=row['effect_fg_percent'],
+        ft=row['ft'],
+        fta=row['fta'],
+        ft_percent=row['ft_percent'],
+        ORB=row['ORB'],
+        DRB=row['DRB'],
+        TRB=row['TRB'],
+        AST=row['AST'],
+        STL=row['STL'],
+        BLK=row['BLK'],
+        TOV=row['TOV'],
+        PF=row['PF'],
+        PTS=row['PTS'],
+    )
+    player_data.save()
