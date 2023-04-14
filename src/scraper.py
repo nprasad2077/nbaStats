@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
+import json
 import os
 
 url = 'https://www.basketball-reference.com/teams/HOU/2018.html'
@@ -16,20 +17,30 @@ rows = table.find("tbody").find_all("tr")
 # Extract coloumn headers
 headers = [col.text.strip() for col in header_row.find_all("th")][1:]
 
-# add coloumn headers to the data list
-data = [headers]
 
-# extract rows of data into proper column with headers.
-
+# extract rows as dictionaries
+data = []
 for row in rows:
     cols = row.find_all("td")
     cols = [col.text.strip() for col in cols]
-    data.append(cols)
+    row_dict = dict(zip(headers, cols))
+    data.append(row_dict)
     
-    
+## locate current directory
 script_dir = os.path.dirname(os.path.abspath(__file__))
-output_path = os.path.join(script_dir, '..', 'data', 'output.csv')
 
-with open(output_path, "w", newline="") as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerows(data)
+## CSV file
+
+csv_output_path = os.path.join(script_dir, '..', 'data', 'output.csv')
+
+with open(csv_output_path, "w", newline="") as csvfile:
+    writer = csv.DictWriter(csvfile, fieldnames =headers)
+    writer.writeheader()
+    for row in data:
+        writer.writerow(row)
+
+# Save as JSON
+
+json_output_path = os.path.join(script_dir, '..', 'data', 'output.json')
+with open(json_output_path, 'w') as jsonfile:
+    json.dump(data, jsonfile)
