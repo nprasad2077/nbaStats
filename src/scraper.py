@@ -5,6 +5,8 @@ import json
 import os
 
 url = 'https://www.basketball-reference.com/teams/HOU/2018.html'
+lakers = 'https://www.basketball-reference.com/teams/LAL/2020.html'
+
 response = requests.get(url)
 
 soup = BeautifulSoup(response.text, "html.parser")
