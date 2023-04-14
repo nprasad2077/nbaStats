@@ -4,10 +4,16 @@ import csv
 import json
 import os
 
+
+team = input('What team? ')
+season = input('What season? ')
+
+url_make = 'https://www.basketball-reference.com/teams/' + team + '/' + season + '.html'
+
 url = 'https://www.basketball-reference.com/teams/HOU/2018.html'
 lakers = 'https://www.basketball-reference.com/teams/LAL/2020.html'
 
-response = requests.get(url)
+response = requests.get(url_make)
 
 soup = BeautifulSoup(response.text, "html.parser")
 
@@ -46,3 +52,6 @@ with open(csv_output_path, "w", newline="") as csvfile:
 json_output_path = os.path.join(script_dir, '..', 'data', 'output.json')
 with open(json_output_path, 'w') as jsonfile:
     json.dump(data, jsonfile)
+    
+
+print('success')
