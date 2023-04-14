@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class PlayerData(models.Model):
-    player = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
     age = models.CharField(max_length=100)
     games = models.CharField(max_length=100)
     games_started = models.CharField(max_length=100)
@@ -31,5 +31,5 @@ class PlayerData(models.Model):
     PTS = models.CharField(max_length=100)
     
     def __str__(self):
-        return self.player
+        return self.name
 
