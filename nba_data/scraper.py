@@ -33,14 +33,18 @@ rows = table.find("tbody").find_all("tr")
 
 # Extract coloumn headers
 headers = [col.text.strip() for col in header_row.find_all("th")][1:]
+headers.extend(['team', 'season'])  # Add 'team' and 'season' fields to headers
 
-# extract rows as dictionaries
+# Extract rows as dictionaries
 data = []
 for row in rows:
     cols = row.find_all("td")
     cols = [col.text.strip() for col in cols]
-    row_dict = dict(zip(headers, cols))
+    row_dict = {header: (None if col == "" else col) for header, col in zip(headers, cols)}
+    row_dict['team'] = team
+    row_dict['season'] = season
     data.append(row_dict)
+
 
 # locate current directory
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -88,5 +92,7 @@ for row in data:
         TOV=row['TOV'],
         PF=row['PF'],
         PTS=row['PTS'],
+        team=row['team'],
+        season=row['season'],
     )
     player_data.save()
