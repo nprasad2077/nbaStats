@@ -9,7 +9,7 @@ import json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nbaStats.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nba_stats.settings')
 django.setup()
 
 from nba_data.models import PlayerData
