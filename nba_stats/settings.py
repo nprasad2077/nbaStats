@@ -11,6 +11,14 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
+import os
+
+db_user = os.getenv('DB_USER')
+db_pass = os.getenv('DB_PASS')
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -76,8 +84,12 @@ WSGI_APPLICATION = 'nba_stats.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'nba_stats',
+        'USER': db_user,
+        'PASSWORD': db_pass,
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
