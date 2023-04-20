@@ -32,7 +32,8 @@ for team in teams:
 
     if table is None:
         print(f"Table not found for team {team} and season {season}.")
-        sys.exit(1)
+        # sys.exit(1)
+        continue
 
     header_row = table.find("thead").find("tr")
     rows = table.find("tbody").find_all("tr")
