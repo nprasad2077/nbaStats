@@ -17,6 +17,7 @@ import os
 
 db_user = os.getenv('DB_USER')
 db_pass = os.getenv('DB_PASS')
+SECRET_DJANGO = os.getenv('SECRET_DJANGO')
 
 
 
@@ -28,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-f*v4mu4cc=d6razef+!wlw0zs!z(wh)c5z!vqc)=xh0yfz47zg'
+SECRET_KEY = SECRET_DJANGO
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
