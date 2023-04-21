@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import get_player_data
+from .views import PlayerDataList
 
 urlpatterns = [
-    path('api/player_data/', get_player_data, name='player_data')
+    path('api/playerdata/', PlayerDataList.as_view(), name='playerdata_list'),
 ]
