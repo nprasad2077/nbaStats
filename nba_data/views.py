@@ -2,9 +2,13 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.core import serializers
 from .models import PlayerData
+from rest_framework import generics
+from .serializers import PlayerDataSerializer
+
 
 # Create your views here.
 
-def get_player_data(request):
-    data = serializers.serialize('json', PlayerData.objects.all())
-    return JsonResponse(data, safe=False)
+# API view to list all PlayerData instances
+class PlayerDataList(generics.ListCreateAPIView):
+    queryset = PlayerData.objects.all()
+    serializer_class = PlayerDataSerializer
