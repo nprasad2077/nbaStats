@@ -40,3 +40,13 @@ class PlayerDataByNameList(generics.ListAPIView):
     def get_queryset(self):
         name = self.kwargs['name']
         return PlayerData.objects.filter(name__icontains=name)
+    
+    
+# Fetch Top 20 players by PTS DESC for the season specified.
+class TopScorersbySeasonList(generics.ListAPIView):
+    serializer_class = PlayerDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerData.objects.filter(season=season).order_by('-PTS')[:20]
+
