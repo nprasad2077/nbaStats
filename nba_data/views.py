@@ -12,3 +12,9 @@ from .serializers import PlayerDataSerializer
 class PlayerDataList(generics.ListCreateAPIView):
     queryset = PlayerData.objects.all()
     serializer_class = PlayerDataSerializer
+    
+    
+# Fetch player data by team
+
+class PlayerDataByTeamList(generics.ListAPIView):
+    
