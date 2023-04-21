@@ -15,3 +15,28 @@ class PlayerDataList(generics.ListCreateAPIView):
     # pagination_class = None
     
     
+# Fetch player data by team
+class PlayerDataByTeamList(generics.ListAPIView):
+    serializer_class = PlayerDataSerializer
+    
+    def get_queryset(self):
+        team = self.kwargs['team']
+        return PlayerData.objects.filter(team=team)
+    
+    
+# Fetch player data by season
+class PlayerDataBySeasonList(generics.ListAPIView):
+    serializer_class = PlayerDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerData.objects.filter(season=season)
+    
+    
+# Fetch player data by player name
+class PlayerDataByNameList(generics.ListAPIView):
+    serializer_class = PlayerDataSerializer
+    
+    def get_queryset(self):
+        name = self.kwargs['name']
+        return PlayerData.objects.filter(name__icontains=name)
