@@ -10,7 +10,7 @@ from .serializers import PlayerDataSerializer
 
 # API view to list all PlayerData instances
 class PlayerDataList(generics.ListCreateAPIView):
-    queryset = PlayerData.objects.all()
+    queryset = PlayerData.objects.all().order_by('id')
     serializer_class = PlayerDataSerializer
     # pagination_class = None
     
