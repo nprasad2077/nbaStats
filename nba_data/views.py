@@ -56,7 +56,7 @@ class TopScorersbySeasonList(generics.ListAPIView):
 
 # Fetch and calculate the average 3P made, 3P attemps, 2P made, 2P attempts for all players in each season.
 # Will use APIview here instead of generics.ListAPIView to avoid having to create a serializer to generate the queryset. avg_three_made and avg_two_made are new data points at the time of creation when compared to the per_game model.
-class ThreeTopPointTrends(APIView):
+class ThreeTwoTopPointTrends(APIView):
     def get(self, request, format=None):
         seasons = PlayerData.objects.values_list(
             'season', flat=True).distinct().order_by('season')
