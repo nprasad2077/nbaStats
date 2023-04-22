@@ -65,12 +65,12 @@ class ThreeTwoTopPointTrends(APIView):
         for season in seasons:
             season_data = PlayerData.objects.filter(season=season)
             avg_three_made = season_data.aggregate(Avg('three_fg'))[
-                'three_fg_avg']
+                'three_fg__avg']
             avg_three_attempts = season_data.aggregate(Avg('three_attempts'))[
-                'three_attempts_avg']
-            avg_two_made = season_data.aggregate(Avg('two_fg'))['two_fg_avg']
+                'three_attempts__avg']
+            avg_two_made = season_data.aggregate(Avg('two_fg'))['two_fg__avg']
             avg_two_attempts = season_data.aggregate(Avg('two_attempts'))[
-                'two_attempts_avg']
+                'two_attempts__avg']
 
             data.append({
                 'season': season,
