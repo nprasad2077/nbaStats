@@ -9,14 +9,15 @@
 &nbsp;    
 
 2. Backend API
-	-REST or GraphQL
-	- Flask (Python): Lightweight and easy to set up, suitable for small to medium projects.
 	- Django (Python): A more comprehensive framework that includes an ORM and admin panel out-of-the-box.
-	- Express (Node.js): A fast and minimalistic web framework for Node.js.
-	- Ruby on Rails (Ruby): A powerful and mature full-stack web framework.
-&nbsp;    
+	- Django REST Framework
+&nbsp;   
 
-3. Frontend
+3. Backend DB
+	-Initially SQL lite, but it quickly met its limitations when trying to scrape data for 30 teams at once. It could not handle all the simulataneous connections.
+	- PostgreSQL is the new DB. 
+
+4. Frontend
 	- React/Redux
 	- D3.js
 	- Chart.js
@@ -24,7 +25,7 @@
 	- Websockets or Server-Sent Events
 &nbsp;  
 
-4. Deploy
+1. Deploy
 
 
 
