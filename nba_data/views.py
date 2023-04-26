@@ -81,3 +81,11 @@ class ThreeTwoTopPointTrends(APIView):
             })
 
         return Response(data)
+    
+# Fetch Top 20 players by AST DESC for season specified.
+class TopAssistsBySeasonList(generics.ListAPIView):
+    serializer_class = PlayerDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerData.objects.filter(season=season).order_by('-AST')[:20]
