@@ -3,10 +3,12 @@ from django.http import JsonResponse
 from django.core import serializers
 from .models import PlayerData
 from rest_framework import generics
-from .serializers import PlayerDataSerializer
+from .serializers import PlayerDataSerializer, HistogramDataSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Avg
+from collections import Counter
+import math
 
 
 # Create your views here.
@@ -141,3 +143,34 @@ class TopDefensiveReboundsBySeasonList(generics.ListAPIView):
     def get_queryset(self):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-DRB')[:20]
+
+# PTS Histogram
+
+
+class PointsPerGameHistogramBySeasonList(generics.ListAPIView):
+    serializer_class = HistogramDataSerializer
+
+    def get_queryset(self):
+        season = self.kwargs['season']
+        queryset = PlayerData.objects.filter(season=season)
+
+        # Get the points per game for each player
+        points_per_game_list = [float(player.PTS) for player in queryset]
+
+        # Define histogram bins (e.g., 0-5, 5-10, 10-15, etc.)
+        bin_ranges = range(0, int(math.ceil(max(points_per_game_list))) + 1, 5)
+        histogram_data = Counter()
+
+        # Fill the histogram with data
+        for ppg in points_per_game_list:
+            bin_index = next(
+                (i for i, r in enumerate(bin_ranges) if r >= ppg), -1)
+            if bin_index >= 1:
+                bin_label = f"{bin_ranges[bin_index - 1]}-{bin_ranges[bin_index]}"
+                histogram_data[bin_label] += 1
+
+        # Convert histogram_data to list of dicts for serialization
+        histogram_list = [{"range": k, "count": v}
+                          for k, v in histogram_data.items()]
+
+        return histogram_list
