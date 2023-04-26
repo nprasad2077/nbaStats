@@ -81,11 +81,43 @@ class ThreeTwoTopPointTrends(APIView):
             })
 
         return Response(data)
-    
+
 # Fetch Top 20 players by AST DESC for season specified.
+
+
 class TopAssistsBySeasonList(generics.ListAPIView):
     serializer_class = PlayerDataSerializer
-    
+
     def get_queryset(self):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-AST')[:20]
+
+# Fetch Top 20 players by TRB DESC for season specified.
+
+
+class TopReboundsBySeasonList(generics.ListAPIView):
+    serializer_class = PlayerDataSerializer
+
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerData.objects.filter(season=season).order_by('-TRB')[:20]
+
+# Fetch Top 20 players by BLK DESC for specified season.
+
+
+class TopBlocksBySeasonList(generics.ListAPIView):
+    serializer_class = PlayerDataSerializer
+
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerData.objects.filter(season=season).order_by('-BLK')[:20]
+
+# Fetch Top 20 players by STL DESC for season specified.
+
+
+class TopStealsBySeasonList(generics.ListAPIView):
+    serializer_class = PlayerDataSerializer
+
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerData.objects.filter(season=season).order_by('-STL')[:20]
