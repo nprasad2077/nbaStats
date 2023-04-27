@@ -70,40 +70,42 @@ for team in teams:
     with open(json_output_path, 'w') as jsonfile:
         json.dump(data, jsonfile)
 
-    # # save data to database
-    # for row in data:
-    #     player_data = PlayerData(
-    #         name=row['Player'],
-    #         age=row['Age'],
-    #         games=row['G'],
-    #         games_started=row['GS'],
-    #         minutes_pg=row['MP'],
-    #         field_goals=row['FG'],
-    #         field_attempts=row['FGA'],
-    #         field_percent=row['FG%'],
-    #         three_fg=row['3P'],
-    #         three_attempts=row['3PA'],
-    #         three_percent=row['3P%'],
-    #         two_fg=row['2P'],
-    #         two_attempts=row['2PA'],
-    #         two_percent=row['2P%'],
-    #         effect_fg_percent=row['eFG%'],
-    #         ft=row['FT'],
-    #         fta=row['FTA'],
-    #         ft_percent=row['FT%'],
-    #         ORB=row['ORB'],
-    #         DRB=row['DRB'],
-    #         TRB=row['TRB'],
-    #         AST=row['AST'],
-    #         STL=row['STL'],
-    #         BLK=row['BLK'],
-    #         TOV=row['TOV'],
-    #         PF=row['PF'],
-    #         PTS=row['PTS'],
-    #         team=row['team'],
-    #         season=row['season'],
-    #     )
-    #     player_data.save()
+    # save data to database
+    for row in data:
+        player_data = PlayerTotalsData(
+            player_name = row['Player'],
+            age = row['Age'],
+            games = row['G'],
+            games_started = row['GS'],
+            minutes_played = row['MP'],
+            field_goals = row['FG'],
+            field_attempts = row['FGA'],
+            field_percent = row['FG%'],
+            three_fg = row['3P'],
+            three_attempts = row['3PA'],
+            three_percent = row['3P%'],
+            two_fg = row['2P'],
+            two_attempts = row['2PA'],
+            two_percent = row['2P%'],
+            effect_fg_percent = row['eFG%'],
+            ft = row['FT'],
+            fta = row['FTA'],
+            ft_percent = row['FT%'],
+            ORB= row['ORB'],
+            DRB = row['DRB'],
+            TRB = row['TRB'],
+            AST = row['AST'],
+            STL = row['STL'],
+            BLK = row['BLK'],
+            TOV = row['TOV'],
+            PF = row['PF'],
+            PTS = row['PTS'],
+            team = row['team'],
+            season = row['season'],
+        )
+        player_data.save()
+
+print('success')
         
 
     
