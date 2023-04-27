@@ -15,11 +15,10 @@ django.setup()
 
 from nba_data.models import PlayerAdvancedData
 
+# If season is 2014, then change CHO to CHA
 teams = ['HOU' ,'PHI', 'BOS', 'NYK', 'BRK', 'TOR', 'MEM', 'NOP', 'DAL', 'SAS', 'DEN', 'MIN', 'OKC', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHO']
 team_abbreviations = ['ATL', 'BOS', 'BRK', 'CHI', 'CHO', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NYK', 'OKC', 'ORL', 'PHI', 'PHO', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS']
 
-# team = input('What team? ') 
-#  OMIT above. Will now only ask for season and iterate thru teams list.
 season = input('What season? ')
 
 for team in teams:
@@ -70,40 +69,39 @@ for team in teams:
     with open(json_output_path, 'w') as jsonfile:
         json.dump(data, jsonfile)
 
-    # # save data to database
-    # for row in data:
-    #     player_data = PlayerData(
-    #         name=row['Player'],
-    #         age=row['Age'],
-    #         games=row['G'],
-    #         games_started=row['GS'],
-    #         minutes_pg=row['MP'],
-    #         field_goals=row['FG'],
-    #         field_attempts=row['FGA'],
-    #         field_percent=row['FG%'],
-    #         three_fg=row['3P'],
-    #         three_attempts=row['3PA'],
-    #         three_percent=row['3P%'],
-    #         two_fg=row['2P'],
-    #         two_attempts=row['2PA'],
-    #         two_percent=row['2P%'],
-    #         effect_fg_percent=row['eFG%'],
-    #         ft=row['FT'],
-    #         fta=row['FTA'],
-    #         ft_percent=row['FT%'],
-    #         ORB=row['ORB'],
-    #         DRB=row['DRB'],
-    #         TRB=row['TRB'],
-    #         AST=row['AST'],
-    #         STL=row['STL'],
-    #         BLK=row['BLK'],
-    #         TOV=row['TOV'],
-    #         PF=row['PF'],
-    #         PTS=row['PTS'],
-    #         team=row['team'],
-    #         season=row['season'],
-    #     )
-    #     player_data.save()
+    # save data to database
+    for row in data:
+        player_data = PlayerAdvancedData(
+            player_name = row['Player'],
+            age = row['Age'],
+            games = row['G'],
+            minutes_played = row['MP'],
+            PER = row['PER'],
+            TS_percent = row['TS%'],
+            three_p_attempt_rate = row['3PAr'],
+            ft_attempt_rate = row['FTr'],
+            orb_percent = row['ORB%'],
+            drb_percent = row['DRB%'],
+            trb_percent = row['TRB%'],
+            ast_percent = row['AST%'],
+            stl_percent = row['STL%'],
+            blk_percent = row['BLK%'],
+            tov_percent = row['TOV%'],
+            usg_percent = row['USG%'],
+            ows = row['OWS'],
+            dws = row['DWS'],
+            ws = row['WS'],
+            ws_per_48 = row['WS/48'],
+            obpm = row['OBPM'],
+            dbpm = row['DBPM'],
+            bpm = row['BPM'],
+            vorp = row['VORP'],
+            team = row['team'],
+            season = row['season'],
+        )
+        player_data.save()
+
+print('success')
         
 
     
