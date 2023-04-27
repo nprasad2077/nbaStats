@@ -6,3 +6,8 @@ class PlayerDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayerData
         fields = '__all__'
+        
+class HistogramDataSerializer(serializers.Serializer):
+    range = serializers.CharField()
+    count = serializers.IntegerField()
+
