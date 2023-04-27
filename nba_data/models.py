@@ -95,6 +95,8 @@ class PlayerAdvancedData(models.Model):
     dbpm = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     bpm = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     vorp = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    team = models.CharField(max_length=30, default='')
+    season = models.IntegerField(null=True)
     
     def __str__(self):
         return self.player_name
