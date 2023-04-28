@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from django.db.models import Avg, Sum, F, FloatField
 from collections import Counter
 import math
+from django.db import connection
 
 
 # Create your views here.
@@ -206,3 +207,45 @@ class TopPtsScatterPlotData(APIView):
             })
 
         return Response(data)
+    
+
+class TopPtsScatterPlotDataFast(APIView):
+    def get(self, request):
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                -- The modified query from earlier
+                WITH player_season_pts AS (
+                  SELECT player_name, season, SUM("PTS") as season_pts
+                  FROM nba_data_playertotalsdata
+                  WHERE player_name IN (SELECT player_name FROM (
+                                           SELECT player_name, SUM("PTS") as total_pts
+                                           FROM nba_data_playertotalsdata
+                                           GROUP BY player_name
+                                           ORDER BY total_pts DESC
+                                           LIMIT 25) as top_25_players)
+                  GROUP BY player_name, season
+                ),
+                player_season_ws AS (
+                  SELECT player_name, season, SUM("ws") as season_ws
+                  FROM nba_data_playeradvanceddata
+                  GROUP BY player_name, season
+                )
+                SELECT player_season_pts.player_name, player_season_pts.season, player_season_pts.season_pts, player_season_ws.season_ws
+                FROM player_season_pts
+                JOIN player_season_ws
+                ON player_season_pts.player_name = player_season_ws.player_name AND player_season_pts.season = player_season_ws.season
+                ORDER BY player_season_pts.player_name, player_season_pts.season;
+            """)
+            rows = cursor.fetchall()
+
+        result = []
+        for row in rows:
+            player_name, season, season_pts, season_ws = row
+            result.append({
+                'player_name': player_name,
+                'season': season,
+                'season_pts': season_pts,
+                'season_ws': season_ws
+            })
+
+        return Response(result)
