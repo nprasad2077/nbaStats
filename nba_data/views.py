@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.core import serializers
-from .models import PlayerData
+from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData
 from rest_framework import generics
 from .serializers import PlayerDataSerializer, HistogramDataSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Avg
+from django.db.models import Avg, Sum, F, FloatField
 from collections import Counter
 import math
 
@@ -174,3 +174,35 @@ class PointsPerGameHistogramBySeasonList(generics.ListAPIView):
                           for k, v in histogram_data.items()]
 
         return histogram_list
+
+
+# Scatter Plot - Top 30 players by total PTS across all seasons in DB. Then map those 30 players on a scatter plot against total PTS/WS for each season.
+
+class TopPtsScatterPlotData(APIView):
+    def get(self, request, *args, **kwargs):
+        # Get the top 25 players by overall PTS
+        top_players = PlayerTotalsData.objects.values('player_name') \
+            .annotate(total_pts=Sum(F('PTS'))) \
+            .order_by('-total_pts')[:25]
+
+        # Get the PTS and WS for the corresponding seasons of the top 25 players
+        data = []
+        for player in top_players:
+            player_name = player['player_name']
+            player_seasons = PlayerTotalsData.objects.filter(player_name=player_name) \
+                .values('season') \
+                .annotate(total_pts=Sum(F('PTS'))) \
+                .order_by('season')
+
+            # Combine the WS data from PlayerAdvancedData
+            for season in player_seasons:
+                season_ws = PlayerAdvancedData.objects.filter(player_name=player_name, season=season['season']) \
+                    .aggregate(total_ws=Sum('ws'))
+                season['total_ws'] = season_ws['total_ws']
+
+            data.append({
+                'player_name': player_name,
+                'seasons': list(player_seasons)
+            })
+
+        return Response(data)
