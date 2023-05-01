@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 # Create your models here.
 class PlayerData(models.Model):
@@ -75,7 +76,7 @@ class PlayerAdvancedData(models.Model):
     age = models.IntegerField(null=True)
     games = models.IntegerField(null=True)
     minutes_played = models.IntegerField(null=True)
-    PER = models.DecimalField(max_digits=5, decimal_places=1, null=True)
+    PER = models.DecimalField(max_digits=6, decimal_places=1, null=True)
     TS_percent = models.DecimalField(max_digits=5, decimal_places=3, null=True)
     three_p_attempt_rate = models.DecimalField(max_digits=5, decimal_places=3, null=True)
     ft_attempt_rate = models.DecimalField(max_digits=5, decimal_places=3, null=True)
@@ -142,7 +143,7 @@ class PlayerPlayoffAdvancedData(models.Model):
     age = models.IntegerField(null=True)
     games = models.IntegerField(null=True)
     minutes_played = models.IntegerField(null=True)
-    PER = models.DecimalField(max_digits=5, decimal_places=1, null=True)
+    PER = models.DecimalField(max_digits=6, decimal_places=1, null=True)
     TS_percent = models.DecimalField(max_digits=5, decimal_places=3, null=True)
     three_p_attempt_rate = models.DecimalField(max_digits=5, decimal_places=3, null=True)
     ft_attempt_rate = models.DecimalField(max_digits=5, decimal_places=3, null=True)
@@ -158,12 +159,42 @@ class PlayerPlayoffAdvancedData(models.Model):
     dws = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     ws = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     ws_per_48 = models.DecimalField(max_digits=5, decimal_places=3, null=True)
-    obpm = models.DecimalField(max_digits=5, decimal_places=2, null=True)
-    dbpm = models.DecimalField(max_digits=5, decimal_places=2, null=True)
-    bpm = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    obpm = models.DecimalField(max_digits=5, decimal_places=2, null=True, validators=[MinValueValidator(-100), MaxValueValidator(100)])
+    dbpm = models.DecimalField(max_digits=5, decimal_places=2, null=True, validators=[MinValueValidator(-100), MaxValueValidator(100)])
+    bpm = models.DecimalField(max_digits=5, decimal_places=2, null=True, validators=[MinValueValidator(-100), MaxValueValidator(100)])
     vorp = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     team = models.CharField(max_length=30, default='')
     season = models.IntegerField(null=True)
+    
+    def cap_extreme_values(self):
+        min_value = -100
+        max_value = 100
+        
+        obpm = float(self.obpm)
+        if obpm < min_value:
+            obpm = min_value
+        elif obpm > max_value:
+            obpm = max_value
+        self.obpm = obpm
+
+        dbpm = float(self.dbpm)
+        if dbpm < min_value:
+            dbpm = min_value
+        elif dbpm > max_value:
+            dbpm = max_value
+        self.dbpm = dbpm
+
+        bpm = float(self.bpm)
+        if bpm < min_value:
+            bpm = min_value
+        elif bpm > max_value:
+            bpm = max_value
+        self.bpm = bpm
+
+
+    def save(self, *args, **kwargs):
+        self.cap_extreme_values()
+        super(PlayerPlayoffAdvancedData, self).save(*args, **kwargs)
     
     def __str__(self):
         return self.player_name

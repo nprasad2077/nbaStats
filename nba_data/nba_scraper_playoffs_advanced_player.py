@@ -29,11 +29,18 @@ from nba_data.models import PlayerPlayoffAdvancedData
 
 teams = ['HOU' ,'PHI', 'BOS', 'NYK', 'BRK', 'TOR', 'MEM', 'NOP', 'DAL', 'SAS', 'DEN', 'MIN', 'OKC', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHA']
 
+single_team = ['GSW']
+
 team_abbreviations = ['ATL', 'BOS', 'BRK', 'CHI', 'CHO', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NYK', 'OKC', 'ORL', 'PHI', 'PHO', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS']
+
+# change player name here
+target_player_name = 'Nemanja Nedović'
 
 season = input('What season? ')
 
-for team in teams:
+
+
+for team in single_team:
     url_make = 'https://www.basketball-reference.com/teams/' + team + '/' + season + '.html'
     response = requests.get(url_make)
 
@@ -62,7 +69,8 @@ for team in teams:
         row_dict = {header: (None if col == "" else col) for header, col in zip(headers, cols)}
         row_dict['team'] = team
         row_dict['season'] = season
-        data.append(row_dict)
+        if row_dict['Player'] == target_player_name:
+            data.append(row_dict)
 
 
     # locate current directory
