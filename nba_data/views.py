@@ -208,7 +208,7 @@ class TopPtsScatterPlotData(APIView):
 
         return Response(data)
     
-
+# change lines 223, 227, and 233 where the comments are to alter seasons returned.
 class TopPtsScatterPlotDataFast(APIView):
     def get(self, request):
         with connection.cursor() as cursor:
@@ -220,14 +220,17 @@ class TopPtsScatterPlotDataFast(APIView):
                   WHERE player_name IN (SELECT player_name FROM (
                                            SELECT player_name, SUM("PTS") as total_pts
                                            FROM nba_data_playertotalsdata
+                                           -- WHERE season >= 2021
                                            GROUP BY player_name
                                            ORDER BY total_pts DESC
                                            LIMIT 25) as top_25_players)
+                  -- AND season >= 2021               
                   GROUP BY player_name, season
                 ),
                 player_season_ws AS (
                   SELECT player_name, season, SUM("ws") as season_ws
                   FROM nba_data_playeradvanceddata
+                  -- WHERE season >= 2021
                   GROUP BY player_name, season
                 )
                 SELECT player_season_pts.player_name, player_season_pts.season, player_season_pts.season_pts, player_season_ws.season_ws
