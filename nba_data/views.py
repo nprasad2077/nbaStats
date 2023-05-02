@@ -253,31 +253,82 @@ class TopPtsScatterPlotDataFast(APIView):
 
         return Response(result)
     
+
+class TopPtsScatterPlotDataFast2018(APIView):
+    def get(self, request):
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                -- The modified query from earlier
+                WITH player_season_pts AS (
+                  SELECT player_name, season, SUM("PTS") as season_pts
+                  FROM nba_data_playertotalsdata
+                  WHERE player_name IN (SELECT player_name FROM (
+                                           SELECT player_name, SUM("PTS") as total_pts
+                                           FROM nba_data_playertotalsdata
+                                           WHERE season >= 2018
+                                           GROUP BY player_name
+                                           ORDER BY total_pts DESC
+                                           LIMIT 25) as top_25_players)
+                  AND season >= 2018               
+                  GROUP BY player_name, season
+                ),
+                player_season_ws AS (
+                  SELECT player_name, season, SUM("ws") as season_ws
+                  FROM nba_data_playeradvanceddata
+                  WHERE season >= 2018
+                  GROUP BY player_name, season
+                )
+                SELECT player_season_pts.player_name, player_season_pts.season, player_season_pts.season_pts, player_season_ws.season_ws
+                FROM player_season_pts
+                JOIN player_season_ws
+                ON player_season_pts.player_name = player_season_ws.player_name AND player_season_pts.season = player_season_ws.season
+                ORDER BY player_season_pts.player_name, player_season_pts.season;
+            """)
+            rows = cursor.fetchall()
+
+        result = []
+        for row in rows:
+            player_name, season, season_pts, season_ws = row
+            result.append({
+                'player_name': player_name,
+                'season': season,
+                'season_pts': season_pts,
+                'season_ws': season_ws
+            })
+
+        return Response(result)
+    
     
 # Top 20 players in playoffs by PTS X ws for scatter plot in chart.js
     
 class Top20ScorersPost2009WS(APIView):
     def get(self, request):
-        # Get the top 20 scorers after the 2015 season
+        # Get the top 20 scorers after the 2009 season
         top_scorers = PlayerPlayoffTotalsData.objects \
             .filter(season__gt=2009) \
             .values('player_name') \
             .annotate(total_pts=Sum('PTS')) \
             .order_by('-total_pts')[:20]
 
-        # Get the total WS for each of the top 20 scorers after the 2015 season
+        # Get the total WS for each of the top 20 scorers after the 2009 season
         chart_data = []
         for scorer in top_scorers:
             player_name = scorer['player_name']
-            total_ws = PlayerPlayoffAdvancedData.objects \
+            player_season_data = PlayerPlayoffAdvancedData.objects \
                 .filter(player_name=player_name, season__gt=2009) \
-                .aggregate(total_ws=Sum('ws'))['total_ws']
+                .annotate(season_value=F('season')) \
+                .values('season_value', 'ws')
 
-            chart_data.append({
-                'x': scorer['total_pts'],
-                'y': total_ws,
-                'player_name': player_name
-            })
+            for data in player_season_data:
+                season_value = data['season_value']
+                season_pts = PlayerPlayoffTotalsData.objects \
+                    .get(player_name=player_name, season=season_value).PTS
+                chart_data.append({
+                    'x': season_pts,
+                    'y': data['ws'],
+                    'player_name': player_name,
+                    'season': data['season_value']
+                })
 
         # Sort the data by total_ws DESC
         chart_data = sorted(chart_data, key=lambda x: x['y'], reverse=True)
