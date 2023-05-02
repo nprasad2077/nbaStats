@@ -347,26 +347,32 @@ class Top20ScorersPost2009WS(APIView):
 
 class Top20ScorersPost2014WS(APIView):
     def get(self, request):
-        # Get the top 20 scorers after the 2015 season
+        # Get the top 20 scorers after the 2014 season
         top_scorers = PlayerPlayoffTotalsData.objects \
             .filter(season__gt=2014) \
             .values('player_name') \
             .annotate(total_pts=Sum('PTS')) \
             .order_by('-total_pts')[:20]
 
-        # Get the total WS for each of the top 20 scorers after the 2015 season
+        # Get the total WS for each of the top 20 scorers after the 2014 season
         chart_data = []
         for scorer in top_scorers:
             player_name = scorer['player_name']
-            total_ws = PlayerPlayoffAdvancedData.objects \
+            player_season_data = PlayerPlayoffAdvancedData.objects \
                 .filter(player_name=player_name, season__gt=2014) \
-                .aggregate(total_ws=Sum('ws'))['total_ws']
+                .annotate(season_value=F('season')) \
+                .values('season_value', 'ws')
 
-            chart_data.append({
-                'x': scorer['total_pts'],
-                'y': total_ws,
-                'player_name': player_name
-            })
+            for data in player_season_data:
+                season_value = data['season_value']
+                season_pts = PlayerPlayoffTotalsData.objects \
+                    .get(player_name=player_name, season=season_value).PTS
+                chart_data.append({
+                    'x': season_pts,
+                    'y': data['ws'],
+                    'player_name': player_name,
+                    'season': data['season_value']
+                })
 
         # Sort the data by total_ws DESC
         chart_data = sorted(chart_data, key=lambda x: x['y'], reverse=True)
@@ -384,26 +390,32 @@ class Top20ScorersPost2014WS(APIView):
 
 class Top20ScorersPost2018WS(APIView):
     def get(self, request):
-        # Get the top 20 scorers after the 2015 season
+        # Get the top 20 scorers after the 2018 season
         top_scorers = PlayerPlayoffTotalsData.objects \
             .filter(season__gt=2018) \
             .values('player_name') \
             .annotate(total_pts=Sum('PTS')) \
             .order_by('-total_pts')[:20]
 
-        # Get the total WS for each of the top 20 scorers after the 2015 season
+        # Get the total WS for each of the top 20 scorers after the 2018 season
         chart_data = []
         for scorer in top_scorers:
             player_name = scorer['player_name']
-            total_ws = PlayerPlayoffAdvancedData.objects \
+            player_season_data = PlayerPlayoffAdvancedData.objects \
                 .filter(player_name=player_name, season__gt=2018) \
-                .aggregate(total_ws=Sum('ws'))['total_ws']
+                .annotate(season_value=F('season')) \
+                .values('season_value', 'ws')
 
-            chart_data.append({
-                'x': scorer['total_pts'],
-                'y': total_ws,
-                'player_name': player_name
-            })
+            for data in player_season_data:
+                season_value = data['season_value']
+                season_pts = PlayerPlayoffTotalsData.objects \
+                    .get(player_name=player_name, season=season_value).PTS
+                chart_data.append({
+                    'x': season_pts,
+                    'y': data['ws'],
+                    'player_name': player_name,
+                    'season': data['season_value']
+                })
 
         # Sort the data by total_ws DESC
         chart_data = sorted(chart_data, key=lambda x: x['y'], reverse=True)
