@@ -303,90 +303,90 @@ class TopPtsScatterPlotDataFast2018(APIView):
     
 class Top20ScorersPost2009WS(APIView):
     def get(self, request):
-        # Get the top 20 scorers after the 2009 season
-        top_scorers = PlayerPlayoffTotalsData.objects \
-            .filter(season__gt=2009) \
-            .values('player_name') \
-            .annotate(total_pts=Sum('PTS')) \
-            .order_by('-total_pts')[:20]
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                WITH player_playoff_pts AS (
+                  SELECT player_name, season, SUM("PTS") as season_pts
+                  FROM nba_data_playerplayofftotalsdata
+                  WHERE player_name IN (SELECT player_name FROM (
+                                               SELECT player_name, SUM("PTS") as total_pts
+                                               FROM nba_data_playerplayofftotalsdata
+                                               WHERE season >= 2010
+                                               GROUP BY player_name
+                                               ORDER BY total_pts DESC
+                                               LIMIT 25) as top_25_players)
+                  AND season >= 2010               
+                  GROUP BY player_name, season
+                ),
+                player_playoff_ws AS (
+                  SELECT player_name, season, SUM("ws") as season_ws
+                  FROM nba_data_playerplayoffadvanceddata
+                  WHERE season >= 2010
+                  GROUP BY player_name, season
+                )
+                SELECT player_playoff_pts.player_name, player_playoff_pts.season, player_playoff_pts.season_pts, player_playoff_ws.season_ws
+                FROM player_playoff_pts
+                JOIN player_playoff_ws
+                ON player_playoff_pts.player_name = player_playoff_ws.player_name AND player_playoff_pts.season = player_playoff_ws.season
+                ORDER BY player_playoff_pts.player_name, player_playoff_pts.season;
+            """)
+            rows = cursor.fetchall()
 
-        # Get the total WS for each of the top 20 scorers after the 2009 season
-        chart_data = []
-        for scorer in top_scorers:
-            player_name = scorer['player_name']
-            player_season_data = PlayerPlayoffAdvancedData.objects \
-                .filter(player_name=player_name, season__gt=2009) \
-                .annotate(season_value=F('season')) \
-                .values('season_value', 'ws')
+        result = []
+        for row in rows:
+            player_name, season, season_pts, season_ws = row
+            result.append({
+                'player_name': player_name,
+                'season': season,
+                'season_pts': season_pts,
+                'season_ws': season_ws
+            })
 
-            for data in player_season_data:
-                season_value = data['season_value']
-                season_pts = PlayerPlayoffTotalsData.objects \
-                    .get(player_name=player_name, season=season_value).PTS
-                chart_data.append({
-                    'x': season_pts,
-                    'y': data['ws'],
-                    'player_name': player_name,
-                    'season': data['season_value']
-                })
-
-        # Sort the data by total_ws DESC
-        chart_data = sorted(chart_data, key=lambda x: x['y'], reverse=True)
-
-        # Prepare the response data for chart.js
-        response_data = {
-            'datasets': [
-                {
-                    'data': chart_data
-                }
-            ]
-        }
-
-        return Response(response_data)
+        return Response(result)
     
 
 class Top20ScorersPost2014WS(APIView):
     def get(self, request):
-        # Get the top 20 scorers after the 2014 season
-        top_scorers = PlayerPlayoffTotalsData.objects \
-            .filter(season__gt=2014) \
-            .values('player_name') \
-            .annotate(total_pts=Sum('PTS')) \
-            .order_by('-total_pts')[:20]
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                WITH player_playoff_pts AS (
+                  SELECT player_name, season, SUM("PTS") as season_pts
+                  FROM nba_data_playerplayofftotalsdata
+                  WHERE player_name IN (SELECT player_name FROM (
+                                               SELECT player_name, SUM("PTS") as total_pts
+                                               FROM nba_data_playerplayofftotalsdata
+                                               WHERE season >= 2015
+                                               GROUP BY player_name
+                                               ORDER BY total_pts DESC
+                                               LIMIT 25) as top_25_players)
+                  AND season >= 2015               
+                  GROUP BY player_name, season
+                ),
+                player_playoff_ws AS (
+                  SELECT player_name, season, SUM("ws") as season_ws
+                  FROM nba_data_playerplayoffadvanceddata
+                  WHERE season >= 2015
+                  GROUP BY player_name, season
+                )
+                SELECT player_playoff_pts.player_name, player_playoff_pts.season, player_playoff_pts.season_pts, player_playoff_ws.season_ws
+                FROM player_playoff_pts
+                JOIN player_playoff_ws
+                ON player_playoff_pts.player_name = player_playoff_ws.player_name AND player_playoff_pts.season = player_playoff_ws.season
+                ORDER BY player_playoff_pts.player_name, player_playoff_pts.season;
+            """)
+            rows = cursor.fetchall()
 
-        # Get the total WS for each of the top 20 scorers after the 2014 season
-        chart_data = []
-        for scorer in top_scorers:
-            player_name = scorer['player_name']
-            player_season_data = PlayerPlayoffAdvancedData.objects \
-                .filter(player_name=player_name, season__gt=2014) \
-                .annotate(season_value=F('season')) \
-                .values('season_value', 'ws')
+        result = []
+        for row in rows:
+            player_name, season, season_pts, season_ws = row
+            result.append({
+                'player_name': player_name,
+                'season': season,
+                'season_pts': season_pts,
+                'season_ws': season_ws
+            })
 
-            for data in player_season_data:
-                season_value = data['season_value']
-                season_pts = PlayerPlayoffTotalsData.objects \
-                    .get(player_name=player_name, season=season_value).PTS
-                chart_data.append({
-                    'x': season_pts,
-                    'y': data['ws'],
-                    'player_name': player_name,
-                    'season': data['season_value']
-                })
-
-        # Sort the data by total_ws DESC
-        chart_data = sorted(chart_data, key=lambda x: x['y'], reverse=True)
-
-        # Prepare the response data for chart.js
-        response_data = {
-            'datasets': [
-                {
-                    'data': chart_data
-                }
-            ]
-        }
-
-        return Response(response_data)
+        return Response(result)
 
 class Top20ScorersPost2018WS(APIView):
     def get(self, request):
@@ -398,17 +398,17 @@ class Top20ScorersPost2018WS(APIView):
                   WHERE player_name IN (SELECT player_name FROM (
                                                SELECT player_name, SUM("PTS") as total_pts
                                                FROM nba_data_playerplayofftotalsdata
-                                               WHERE season >= 2018
+                                               WHERE season >= 2019
                                                GROUP BY player_name
                                                ORDER BY total_pts DESC
                                                LIMIT 25) as top_25_players)
-                  AND season >= 2018               
+                  AND season >= 2019               
                   GROUP BY player_name, season
                 ),
                 player_playoff_ws AS (
                   SELECT player_name, season, SUM("ws") as season_ws
                   FROM nba_data_playerplayoffadvanceddata
-                  WHERE season >= 2018
+                  WHERE season >= 2019
                   GROUP BY player_name, season
                 )
                 SELECT player_playoff_pts.player_name, player_playoff_pts.season, player_playoff_pts.season_pts, player_playoff_ws.season_ws
