@@ -1,6 +1,6 @@
 # Serializers are defined that will convert model instances to JSON
 from rest_framework import serializers
-from .models import PlayerData
+from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData, PlayerPlayoffTotalsData, PlayerPlayoffAdvancedData
 
 class PlayerDataSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,4 +10,9 @@ class PlayerDataSerializer(serializers.ModelSerializer):
 class HistogramDataSerializer(serializers.Serializer):
     range = serializers.CharField()
     count = serializers.IntegerField()
+    
+class PlayerPlayoffTotalsDataSerializer(serializers.Serializer):
+    class Meta:
+        model = PlayerPlayoffTotalsData
+        fields = '__all__'
 
