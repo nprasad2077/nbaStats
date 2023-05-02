@@ -13,13 +13,24 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nba_stats.settings')
 django.setup()
 
-from nba_data.models import PlayerTotalsData
+from nba_data.models import PlayerPlayoffTotalsData
 
-teams = ['HOU' ,'PHI', 'BOS', 'NYK', 'BRK', 'TOR', 'MEM', 'NOP', 'DAL', 'SAS', 'DEN', 'MIN', 'OKC', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHO']
+# Change CHO to CHA 2014 and prior.
+# Change NOP to NOH for 2013 and prior.
+# Change OKC to SEA for 2008 and prior.
+# Change NOH to NOK for 2007 and 2006
+# Change NOK to NOH for 2005 and prior.
+# Change NOH to CHH for 2002 and prior. NOLA did not have a team before 2003.
+# Change WAS to WSB for 1997 and prior.
+# Change BRK to NJN for 2012 and prior.
+# Change MEM to VAN for 2001 and prior.
+# Change LAC to SDC for 1984 and prior.
+
+
+teams = ['HOU' ,'PHI', 'BOS', 'NYK', 'NJN', 'TOR', 'MEM', 'NOH', 'DAL', 'SAS', 'DEN', 'MIN', 'OKC', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHA']
+
 team_abbreviations = ['ATL', 'BOS', 'BRK', 'CHI', 'CHO', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NYK', 'OKC', 'ORL', 'PHI', 'PHO', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS']
 
-# team = input('What team? ') 
-#  OMIT above. Will now only ask for season and iterate thru teams list.
 season = input('What season? ')
 
 for team in teams:
@@ -28,7 +39,7 @@ for team in teams:
 
     soup = BeautifulSoup(response.text, "html.parser")
     
-    table = soup.find("table", {"id": "totals"})
+    table = soup.find("table", {"id": "playoffs_totals"})
 
     if table is None:
         print(f"Table not found for team {team} and season {season}.")
@@ -58,7 +69,7 @@ for team in teams:
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
     # save as CSV file
-    csv_output_path = os.path.join(script_dir, '..', 'data', f'{team}_{season}_totals_output.csv')
+    csv_output_path = os.path.join(script_dir, '..', 'data', f'{team}_{season}_playoffs_totals_output.csv')
     with open(csv_output_path, "w", newline="") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=headers)
         writer.writeheader()
@@ -66,13 +77,13 @@ for team in teams:
             writer.writerow(row)
 
     # Save as JSON
-    json_output_path = os.path.join(script_dir, '..', 'data', f'{team}_{season}_totals_output.json')
+    json_output_path = os.path.join(script_dir, '..', 'data', f'{team}_{season}_playoffs_totals_output.json')
     with open(json_output_path, 'w') as jsonfile:
         json.dump(data, jsonfile)
 
     # save data to database
     for row in data:
-        player_data = PlayerTotalsData(
+        player_data = PlayerPlayoffTotalsData(
             player_name = row['Player'],
             age = row['Age'],
             games = row['G'],

@@ -1,14 +1,15 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.core import serializers
-from .models import PlayerData
+from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData, PlayerPlayoffTotalsData, PlayerPlayoffAdvancedData
 from rest_framework import generics
 from .serializers import PlayerDataSerializer, HistogramDataSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Avg
+from django.db.models import Avg, Sum, F, FloatField
 from collections import Counter
 import math
+from django.db import connection
 
 
 # Create your views here.
@@ -174,3 +175,196 @@ class PointsPerGameHistogramBySeasonList(generics.ListAPIView):
                           for k, v in histogram_data.items()]
 
         return histogram_list
+
+
+# Scatter Plot - Top 30 players by total PTS across all seasons in DB. Then map those 30 players on a scatter plot against total PTS/WS for each season.
+
+class TopPtsScatterPlotData(APIView):
+    def get(self, request, *args, **kwargs):
+        # Get the top 25 players by overall PTS
+        top_players = PlayerTotalsData.objects.values('player_name') \
+            .annotate(total_pts=Sum(F('PTS'))) \
+            .order_by('-total_pts')[:25]
+
+        # Get the PTS and WS for the corresponding seasons of the top 25 players
+        data = []
+        for player in top_players:
+            player_name = player['player_name']
+            player_seasons = PlayerTotalsData.objects.filter(player_name=player_name) \
+                .values('season') \
+                .annotate(total_pts=Sum(F('PTS'))) \
+                .order_by('season')
+
+            # Combine the WS data from PlayerAdvancedData
+            for season in player_seasons:
+                season_ws = PlayerAdvancedData.objects.filter(player_name=player_name, season=season['season']) \
+                    .aggregate(total_ws=Sum('ws'))
+                season['total_ws'] = season_ws['total_ws']
+
+            data.append({
+                'player_name': player_name,
+                'seasons': list(player_seasons)
+            })
+
+        return Response(data)
+    
+# change lines 223, 227, and 233 where the comments are to alter seasons returned.
+class TopPtsScatterPlotDataFast(APIView):
+    def get(self, request):
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                -- The modified query from earlier
+                WITH player_season_pts AS (
+                  SELECT player_name, season, SUM("PTS") as season_pts
+                  FROM nba_data_playertotalsdata
+                  WHERE player_name IN (SELECT player_name FROM (
+                                           SELECT player_name, SUM("PTS") as total_pts
+                                           FROM nba_data_playertotalsdata
+                                           -- WHERE season >= 2021
+                                           GROUP BY player_name
+                                           ORDER BY total_pts DESC
+                                           LIMIT 25) as top_25_players)
+                  -- AND season >= 2021               
+                  GROUP BY player_name, season
+                ),
+                player_season_ws AS (
+                  SELECT player_name, season, SUM("ws") as season_ws
+                  FROM nba_data_playeradvanceddata
+                  -- WHERE season >= 2021
+                  GROUP BY player_name, season
+                )
+                SELECT player_season_pts.player_name, player_season_pts.season, player_season_pts.season_pts, player_season_ws.season_ws
+                FROM player_season_pts
+                JOIN player_season_ws
+                ON player_season_pts.player_name = player_season_ws.player_name AND player_season_pts.season = player_season_ws.season
+                ORDER BY player_season_pts.player_name, player_season_pts.season;
+            """)
+            rows = cursor.fetchall()
+
+        result = []
+        for row in rows:
+            player_name, season, season_pts, season_ws = row
+            result.append({
+                'player_name': player_name,
+                'season': season,
+                'season_pts': season_pts,
+                'season_ws': season_ws
+            })
+
+        return Response(result)
+    
+    
+# Top 20 players in playoffs by PTS X ws for scatter plot in chart.js
+    
+class Top20ScorersPost2009WS(APIView):
+    def get(self, request):
+        # Get the top 20 scorers after the 2015 season
+        top_scorers = PlayerPlayoffTotalsData.objects \
+            .filter(season__gt=2009) \
+            .values('player_name') \
+            .annotate(total_pts=Sum('PTS')) \
+            .order_by('-total_pts')[:20]
+
+        # Get the total WS for each of the top 20 scorers after the 2015 season
+        chart_data = []
+        for scorer in top_scorers:
+            player_name = scorer['player_name']
+            total_ws = PlayerPlayoffAdvancedData.objects \
+                .filter(player_name=player_name, season__gt=2009) \
+                .aggregate(total_ws=Sum('ws'))['total_ws']
+
+            chart_data.append({
+                'x': scorer['total_pts'],
+                'y': total_ws,
+                'player_name': player_name
+            })
+
+        # Sort the data by total_ws DESC
+        chart_data = sorted(chart_data, key=lambda x: x['y'], reverse=True)
+
+        # Prepare the response data for chart.js
+        response_data = {
+            'datasets': [
+                {
+                    'data': chart_data
+                }
+            ]
+        }
+
+        return Response(response_data)
+    
+
+class Top20ScorersPost2014WS(APIView):
+    def get(self, request):
+        # Get the top 20 scorers after the 2015 season
+        top_scorers = PlayerPlayoffTotalsData.objects \
+            .filter(season__gt=2014) \
+            .values('player_name') \
+            .annotate(total_pts=Sum('PTS')) \
+            .order_by('-total_pts')[:20]
+
+        # Get the total WS for each of the top 20 scorers after the 2015 season
+        chart_data = []
+        for scorer in top_scorers:
+            player_name = scorer['player_name']
+            total_ws = PlayerPlayoffAdvancedData.objects \
+                .filter(player_name=player_name, season__gt=2014) \
+                .aggregate(total_ws=Sum('ws'))['total_ws']
+
+            chart_data.append({
+                'x': scorer['total_pts'],
+                'y': total_ws,
+                'player_name': player_name
+            })
+
+        # Sort the data by total_ws DESC
+        chart_data = sorted(chart_data, key=lambda x: x['y'], reverse=True)
+
+        # Prepare the response data for chart.js
+        response_data = {
+            'datasets': [
+                {
+                    'data': chart_data
+                }
+            ]
+        }
+
+        return Response(response_data)
+
+class Top20ScorersPost2018WS(APIView):
+    def get(self, request):
+        # Get the top 20 scorers after the 2015 season
+        top_scorers = PlayerPlayoffTotalsData.objects \
+            .filter(season__gt=2018) \
+            .values('player_name') \
+            .annotate(total_pts=Sum('PTS')) \
+            .order_by('-total_pts')[:20]
+
+        # Get the total WS for each of the top 20 scorers after the 2015 season
+        chart_data = []
+        for scorer in top_scorers:
+            player_name = scorer['player_name']
+            total_ws = PlayerPlayoffAdvancedData.objects \
+                .filter(player_name=player_name, season__gt=2018) \
+                .aggregate(total_ws=Sum('ws'))['total_ws']
+
+            chart_data.append({
+                'x': scorer['total_pts'],
+                'y': total_ws,
+                'player_name': player_name
+            })
+
+        # Sort the data by total_ws DESC
+        chart_data = sorted(chart_data, key=lambda x: x['y'], reverse=True)
+
+        # Prepare the response data for chart.js
+        response_data = {
+            'datasets': [
+                {
+                    'data': chart_data
+                }
+            ]
+        }
+
+        return Response(response_data)
+

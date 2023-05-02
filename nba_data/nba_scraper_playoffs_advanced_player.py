@@ -13,22 +13,40 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nba_stats.settings')
 django.setup()
 
-from nba_data.models import PlayerTotalsData
+from nba_data.models import PlayerPlayoffAdvancedData
 
-teams = ['HOU' ,'PHI', 'BOS', 'NYK', 'BRK', 'TOR', 'MEM', 'NOP', 'DAL', 'SAS', 'DEN', 'MIN', 'OKC', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHO']
+# Change CHO to CHA 2014 and prior.
+# Change NOP to NOH for 2013 and prior.
+# Change OKC to SEA for 2008 and prior.
+# Change NOH to NOK for 2007 and 2006
+# Change NOK to NOH for 2005 and prior.
+# Change NOH to CHH for 2002 and prior. NOLA did not have a team before 2003.
+# Change WAS to WSB for 1997 and prior.
+# Change BRK to NJN for 2012 and prior.
+# Change MEM to VAN for 2001 and prior.
+# Change LAC to SDC for 1984 and prior.
+
+
+teams = ['HOU' ,'PHI', 'BOS', 'NYK', 'BRK', 'TOR', 'MEM', 'NOP', 'DAL', 'SAS', 'DEN', 'MIN', 'OKC', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHA']
+
+single_team = ['GSW']
+
 team_abbreviations = ['ATL', 'BOS', 'BRK', 'CHI', 'CHO', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NYK', 'OKC', 'ORL', 'PHI', 'PHO', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS']
 
-# team = input('What team? ') 
-#  OMIT above. Will now only ask for season and iterate thru teams list.
+# change player name here
+target_player_name = 'Nemanja Nedović'
+
 season = input('What season? ')
 
-for team in teams:
+
+
+for team in single_team:
     url_make = 'https://www.basketball-reference.com/teams/' + team + '/' + season + '.html'
     response = requests.get(url_make)
 
     soup = BeautifulSoup(response.text, "html.parser")
     
-    table = soup.find("table", {"id": "totals"})
+    table = soup.find("table", {"id": "playoffs_advanced"})
 
     if table is None:
         print(f"Table not found for team {team} and season {season}.")
@@ -51,14 +69,15 @@ for team in teams:
         row_dict = {header: (None if col == "" else col) for header, col in zip(headers, cols)}
         row_dict['team'] = team
         row_dict['season'] = season
-        data.append(row_dict)
+        if row_dict['Player'] == target_player_name:
+            data.append(row_dict)
 
 
     # locate current directory
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
     # save as CSV file
-    csv_output_path = os.path.join(script_dir, '..', 'data', f'{team}_{season}_totals_output.csv')
+    csv_output_path = os.path.join(script_dir, '..', 'data', f'{team}_{season}_playoffs_advanced_output.csv')
     with open(csv_output_path, "w", newline="") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=headers)
         writer.writeheader()
@@ -66,40 +85,37 @@ for team in teams:
             writer.writerow(row)
 
     # Save as JSON
-    json_output_path = os.path.join(script_dir, '..', 'data', f'{team}_{season}_totals_output.json')
+    json_output_path = os.path.join(script_dir, '..', 'data', f'{team}_{season}_playoffs_advanced_output.json')
     with open(json_output_path, 'w') as jsonfile:
         json.dump(data, jsonfile)
 
     # save data to database
     for row in data:
-        player_data = PlayerTotalsData(
+        player_data = PlayerPlayoffAdvancedData(
             player_name = row['Player'],
             age = row['Age'],
             games = row['G'],
-            games_started = row['GS'],
             minutes_played = row['MP'],
-            field_goals = row['FG'],
-            field_attempts = row['FGA'],
-            field_percent = row['FG%'],
-            three_fg = row['3P'],
-            three_attempts = row['3PA'],
-            three_percent = row['3P%'],
-            two_fg = row['2P'],
-            two_attempts = row['2PA'],
-            two_percent = row['2P%'],
-            effect_fg_percent = row['eFG%'],
-            ft = row['FT'],
-            fta = row['FTA'],
-            ft_percent = row['FT%'],
-            ORB= row['ORB'],
-            DRB = row['DRB'],
-            TRB = row['TRB'],
-            AST = row['AST'],
-            STL = row['STL'],
-            BLK = row['BLK'],
-            TOV = row['TOV'],
-            PF = row['PF'],
-            PTS = row['PTS'],
+            PER = row['PER'],
+            TS_percent = row['TS%'],
+            three_p_attempt_rate = row['3PAr'],
+            ft_attempt_rate = row['FTr'],
+            orb_percent = row['ORB%'],
+            drb_percent = row['DRB%'],
+            trb_percent = row['TRB%'],
+            ast_percent = row['AST%'],
+            stl_percent = row['STL%'],
+            blk_percent = row['BLK%'],
+            tov_percent = row['TOV%'],
+            usg_percent = row['USG%'],
+            ows = row['OWS'],
+            dws = row['DWS'],
+            ws = row['WS'],
+            ws_per_48 = row['WS/48'],
+            obpm = row['OBPM'],
+            dbpm = row['DBPM'],
+            bpm = row['BPM'],
+            vorp = row['VORP'],
             team = row['team'],
             season = row['season'],
         )
