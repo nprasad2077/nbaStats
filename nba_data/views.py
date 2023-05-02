@@ -440,6 +440,14 @@ class TopScorersbySeasonListPlayoffs(generics.ListAPIView):
         return PlayerPlayoffTotalsData.objects.filter(season=season).order_by('-PTS')[:20]
     
 
+class TopAssistsBySeasonListPlayoffs(generics.ListAPIView):
+    serializer_class = PlayerPlayoffTotalsDataSerializer
+
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerPlayoffTotalsData.objects.filter(season=season).order_by('-AST')[:20]
+    
+
 
 
 

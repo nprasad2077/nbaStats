@@ -16,3 +16,19 @@ class PlayerPlayoffTotalsDataSerializer(serializers.ModelSerializer):
         model = PlayerPlayoffTotalsData
         fields = '__all__'
 
+class PlayerTotalsDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlayerTotalsData
+        fields = '__all__'
+
+class PlayerAdvancedDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlayerAdvancedData
+        fields = '__all__'
+
+class PlayerPlayoffAdvancedDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlayerPlayoffAdvancedData
+        fields = '__all__'
+    
+
