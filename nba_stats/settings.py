@@ -10,10 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from dotenv import load_dotenv
-load_dotenv()
-import os
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(dotenv_path=Path(BASE_DIR) / '.env')
+
 
 db_user = os.getenv('DB_USER')
 db_pass = os.getenv('DB_PASS')
@@ -21,7 +26,6 @@ SECRET_DJANGO = os.getenv('SECRET_DJANGO')
 aws_user = os.getenv('AWS_USER')
 aws_pass = os.getenv('AWS_PASS')
 db_url = os.getenv('DB_URL')
-
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -35,7 +39,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = SECRET_DJANGO
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -57,6 +62,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -144,11 +150,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 100,  # Adjust this value according to the number of records you want to display per page
+    # Adjust this value according to the number of records you want to display per page
+    'PAGE_SIZE': 100,
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Replace this with the origin of your frontend app
+    "*",  # Replace this with the origin of your frontend app
 ]
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Configure WhiteNoise for serving static files
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

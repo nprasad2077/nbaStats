@@ -542,7 +542,7 @@ class TopAssistsBySeasonListPlayoffs(generics.ListAPIView):
     
 
 class OverallDBStats(APIView):
-    def get(self. request):
+    def get(self, request):
         total_players_regular = PlayerTotalsData.objects.count()
         total_players_playoffs = PlayerPlayoffAdvancedData.objects.count()
         regular_season_range = PlayerTotalsData.objects.aggregate(Min('season'), Max('season'))
