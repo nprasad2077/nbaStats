@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import PlayerDataList, PlayerDataByTeamList, PlayerDataBySeasonList, PlayerDataByNameList, TopScorersbySeasonList, ThreeTwoTopPointTrends, TopAssistsBySeasonList, TopReboundsBySeasonList, TopBlocksBySeasonList, TopStealsBySeasonList, TopOffensiveReboundsBySeasonList, TopDefensiveReboundsBySeasonList, PointsPerGameHistogramBySeasonList, TopPtsScatterPlotData, TopPtsScatterPlotDataFast
+from .views import PlayerDataList, PlayerDataByTeamList, PlayerDataBySeasonList, PlayerDataByNameList, TopScorersbySeasonList, ThreeTwoTopPointTrends, TopAssistsBySeasonList, TopReboundsBySeasonList, TopBlocksBySeasonList, TopStealsBySeasonList, TopOffensiveReboundsBySeasonList, TopDefensiveReboundsBySeasonList, PointsPerGameHistogramBySeasonList, TopPtsScatterPlotData, TopPtsScatterPlotDataFast, Top20ScorersPost2009WS
 
 urlpatterns = [
     path('api/playerdata/', PlayerDataList.as_view(), name='playerdata_list'),
@@ -17,4 +17,5 @@ urlpatterns = [
     path('api/points_per_game_histogram/<int:season>/', PointsPerGameHistogramBySeasonList.as_view(), name='points_per_game_histogram'),
     path('api/top_pts_scatter_plot/', TopPtsScatterPlotData.as_view(), name='top_pts_scatter_plot'),
     path('api/top_pts_scatter_plot_fast/', TopPtsScatterPlotDataFast.as_view(), name='top_pts_scatter_plot_fast'),
+    path('api/top_20_post_2009_PTS_ws/', Top20ScorersPost2009WS.as_view(), name='top_20_post_2009_PTS_ws')
 ]

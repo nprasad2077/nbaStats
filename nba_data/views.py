@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.core import serializers
-from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData
+from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData, PlayerPlayoffTotalsData, PlayerPlayoffAdvancedData
 from rest_framework import generics
 from .serializers import PlayerDataSerializer, HistogramDataSerializer
 from rest_framework.views import APIView
@@ -252,3 +252,44 @@ class TopPtsScatterPlotDataFast(APIView):
             })
 
         return Response(result)
+    
+    
+# Top 20 players in playoffs by PTS X ws for scatter plot in chart.js
+    
+class Top20ScorersPost2009WS(APIView):
+    def get(self, request):
+        # Get the top 20 scorers after the 2015 season
+        top_scorers = PlayerPlayoffTotalsData.objects \
+            .filter(season__gt=2009) \
+            .values('player_name') \
+            .annotate(total_pts=Sum('PTS')) \
+            .order_by('-total_pts')[:20]
+
+        # Get the total WS for each of the top 20 scorers after the 2015 season
+        chart_data = []
+        for scorer in top_scorers:
+            player_name = scorer['player_name']
+            total_ws = PlayerPlayoffAdvancedData.objects \
+                .filter(player_name=player_name, season__gt=2009) \
+                .aggregate(total_ws=Sum('ws'))['total_ws']
+
+            chart_data.append({
+                'x': scorer['total_pts'],
+                'y': total_ws,
+                'player_name': player_name
+            })
+
+        # Sort the data by total_ws DESC
+        chart_data = sorted(chart_data, key=lambda x: x['y'], reverse=True)
+
+        # Prepare the response data for chart.js
+        response_data = {
+            'datasets': [
+                {
+                    'data': chart_data
+                }
+            ]
+        }
+
+        return Response(response_data)
+
