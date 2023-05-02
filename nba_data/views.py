@@ -292,4 +292,79 @@ class Top20ScorersPost2009WS(APIView):
         }
 
         return Response(response_data)
+    
+
+class Top20ScorersPost2014WS(APIView):
+    def get(self, request):
+        # Get the top 20 scorers after the 2015 season
+        top_scorers = PlayerPlayoffTotalsData.objects \
+            .filter(season__gt=2014) \
+            .values('player_name') \
+            .annotate(total_pts=Sum('PTS')) \
+            .order_by('-total_pts')[:20]
+
+        # Get the total WS for each of the top 20 scorers after the 2015 season
+        chart_data = []
+        for scorer in top_scorers:
+            player_name = scorer['player_name']
+            total_ws = PlayerPlayoffAdvancedData.objects \
+                .filter(player_name=player_name, season__gt=2014) \
+                .aggregate(total_ws=Sum('ws'))['total_ws']
+
+            chart_data.append({
+                'x': scorer['total_pts'],
+                'y': total_ws,
+                'player_name': player_name
+            })
+
+        # Sort the data by total_ws DESC
+        chart_data = sorted(chart_data, key=lambda x: x['y'], reverse=True)
+
+        # Prepare the response data for chart.js
+        response_data = {
+            'datasets': [
+                {
+                    'data': chart_data
+                }
+            ]
+        }
+
+        return Response(response_data)
+
+class Top20ScorersPost2018WS(APIView):
+    def get(self, request):
+        # Get the top 20 scorers after the 2015 season
+        top_scorers = PlayerPlayoffTotalsData.objects \
+            .filter(season__gt=2018) \
+            .values('player_name') \
+            .annotate(total_pts=Sum('PTS')) \
+            .order_by('-total_pts')[:20]
+
+        # Get the total WS for each of the top 20 scorers after the 2015 season
+        chart_data = []
+        for scorer in top_scorers:
+            player_name = scorer['player_name']
+            total_ws = PlayerPlayoffAdvancedData.objects \
+                .filter(player_name=player_name, season__gt=2018) \
+                .aggregate(total_ws=Sum('ws'))['total_ws']
+
+            chart_data.append({
+                'x': scorer['total_pts'],
+                'y': total_ws,
+                'player_name': player_name
+            })
+
+        # Sort the data by total_ws DESC
+        chart_data = sorted(chart_data, key=lambda x: x['y'], reverse=True)
+
+        # Prepare the response data for chart.js
+        response_data = {
+            'datasets': [
+                {
+                    'data': chart_data
+                }
+            ]
+        }
+
+        return Response(response_data)
 
