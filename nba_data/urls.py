@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import PlayerDataList, PlayerDataByTeamList, PlayerDataBySeasonList, PlayerDataByNameList, TopScorersbySeasonList, TopScorersbySeasonListPlayoffs, ThreeTwoTopPointTrends, TopAssistsBySeasonList, TopReboundsBySeasonList, TopBlocksBySeasonList, TopStealsBySeasonList, TopOffensiveReboundsBySeasonList, TopDefensiveReboundsBySeasonList, PointsPerGameHistogramBySeasonList, TopPtsScatterPlotData, TopPtsScatterPlotDataFast, TopPtsScatterPlotDataFast2018, Top20ScorersPost2009WS, Top20ScorersPost2014WS, Top20ScorersPost2018WS, TopAssistsBySeasonListPlayoffs
+from .views import PlayerDataList, PlayerDataByTeamList, PlayerDataBySeasonList, PlayerDataByNameList, TopScorersbySeasonList, TopScorersbySeasonListPlayoffs, ThreeTwoTopPointTrends, TopAssistsBySeasonList, TopReboundsBySeasonList, TopBlocksBySeasonList, TopStealsBySeasonList, TopOffensiveReboundsBySeasonList, TopDefensiveReboundsBySeasonList, PointsPerGameHistogramBySeasonList, TopPtsScatterPlotData, TopPtsScatterPlotDataFast, TopPtsScatterPlotDataFast2018, Top20ScorersPost2009WS, Top20ScorersPost2014WS, Top20ScorersPost2018WS, TopAssistsBySeasonListPlayoffs, Top25ScorersPostSeasonPlayoffs, TopPtsScatterPlotDataFastSelect
 
 urlpatterns = [
     path('api/playerdata/', PlayerDataList.as_view(), name='playerdata_list'),
@@ -23,4 +23,6 @@ urlpatterns = [
     path('api/top_20_post_2009_PTS_ws/', Top20ScorersPost2009WS.as_view(), name='top_20_post_2009_PTS_ws'),
     path('api/top_20_post_2014_PTS_ws/', Top20ScorersPost2014WS.as_view(), name='top_20_post_2014_PTS_ws'),
     path('api/top_20_post_2018_PTS_ws/', Top20ScorersPost2018WS.as_view(), name='top_20_post_2018_PTS_ws'),
+    path('api/top_25_PTS_ws/playoffs/<int:season>/', Top25ScorersPostSeasonPlayoffs.as_view(), name='top_25_PTS_ws_playoffs'),
+    path('api/top_25_PTS_ws/season/<int:season>/', TopPtsScatterPlotDataFastSelect.as_view(), name='top_25_PTS_ws_season'),
 ]

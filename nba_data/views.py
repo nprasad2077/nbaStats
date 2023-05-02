@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.core import serializers
 from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData, PlayerPlayoffTotalsData, PlayerPlayoffAdvancedData
 from rest_framework import generics
@@ -297,6 +297,50 @@ class TopPtsScatterPlotDataFast2018(APIView):
             })
 
         return Response(result)
+
+class TopPtsScatterPlotDataFastSelect(APIView):
+    def get(self, request, season):
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                WITH player_season_pts AS (
+                  SELECT player_name, season, SUM("PTS") as season_pts
+                  FROM nba_data_playertotalsdata
+                  WHERE player_name IN (SELECT player_name FROM (
+                                           SELECT player_name, SUM("PTS") as total_pts
+                                           FROM nba_data_playertotalsdata
+                                           WHERE season >= %s
+                                           GROUP BY player_name
+                                           ORDER BY total_pts DESC
+                                           LIMIT 25) as top_25_players)
+                  AND season >= %s
+                  GROUP BY player_name, season
+                ),
+                player_season_ws AS (
+                  SELECT player_name, season, SUM("ws") as season_ws
+                  FROM nba_data_playeradvanceddata
+                  WHERE season >= %s
+                  GROUP BY player_name, season
+                )
+                SELECT player_season_pts.player_name, player_season_pts.season, player_season_pts.season_pts, player_season_ws.season_ws
+                FROM player_season_pts
+                JOIN player_season_ws
+                ON player_season_pts.player_name = player_season_ws.player_name AND player_season_pts.season = player_season_ws.season
+                ORDER BY player_season_pts.player_name, player_season_pts.season;
+            """, (season, season, season))
+            rows = cursor.fetchall()
+
+        result = []
+        for row in rows:
+            player_name, season, season_pts, season_ws = row
+            result.append({
+                'player_name': player_name,
+                'season': season,
+                'season_pts': season_pts,
+                'season_ws': season_ws
+            })
+
+        return Response(result)
+
     
     
 # Top 20 players in playoffs by PTS X ws for scatter plot in chart.js
@@ -430,6 +474,55 @@ class Top20ScorersPost2018WS(APIView):
             })
 
         return Response(result)
+
+class Top25ScorersPostSeasonPlayoffs(APIView):
+    def get(self, request, season):
+        try:
+            season = int(season)
+        except ValueError:
+            raise Http404("Invalid season format.")
+
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                WITH player_playoff_pts AS (
+                  SELECT player_name, season, SUM("PTS") as season_pts
+                  FROM nba_data_playerplayofftotalsdata
+                  WHERE player_name IN (SELECT player_name FROM (
+                                               SELECT player_name, SUM("PTS") as total_pts
+                                               FROM nba_data_playerplayofftotalsdata
+                                               WHERE season >= %s
+                                               GROUP BY player_name
+                                               ORDER BY total_pts DESC
+                                               LIMIT 25) as top_25_players)
+                  AND season >= %s               
+                  GROUP BY player_name, season
+                ),
+                player_playoff_ws AS (
+                  SELECT player_name, season, SUM("ws") as season_ws
+                  FROM nba_data_playerplayoffadvanceddata
+                  WHERE season >= %s
+                  GROUP BY player_name, season
+                )
+                SELECT player_playoff_pts.player_name, player_playoff_pts.season, player_playoff_pts.season_pts, player_playoff_ws.season_ws
+                FROM player_playoff_pts
+                JOIN player_playoff_ws
+                ON player_playoff_pts.player_name = player_playoff_ws.player_name AND player_playoff_pts.season = player_playoff_ws.season
+                ORDER BY player_playoff_pts.player_name, player_playoff_pts.season;
+            """, (season, season, season))
+            rows = cursor.fetchall()
+
+        result = []
+        for row in rows:
+            player_name, season, season_pts, season_ws = row
+            result.append({
+                'player_name': player_name,
+                'season': season,
+                'season_pts': season_pts,
+                'season_ws': season_ws
+            })
+
+        return Response(result)
+
     
 
 class TopScorersbySeasonListPlayoffs(generics.ListAPIView):
