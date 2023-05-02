@@ -18,6 +18,9 @@ import os
 db_user = os.getenv('DB_USER')
 db_pass = os.getenv('DB_PASS')
 SECRET_DJANGO = os.getenv('SECRET_DJANGO')
+aws_user = os.getenv('AWS_USER')
+aws_pass = os.getenv('AWS_PASS')
+db_url = os.getenv('DB_URL')
 
 
 
@@ -89,11 +92,11 @@ WSGI_APPLICATION = 'nba_stats.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'nba_stats',
-        'USER': db_user,
-        'PASSWORD': db_pass,
-        'HOST': 'localhost',
-        'PORT': '',
+        'NAME': 'nbaStats',
+        'USER': aws_user,
+        'PASSWORD': aws_pass,
+        'HOST': db_url,
+        'PORT': '5432',
     }
 }
 

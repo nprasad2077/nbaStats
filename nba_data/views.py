@@ -6,7 +6,7 @@ from rest_framework import generics
 from .serializers import PlayerDataSerializer, HistogramDataSerializer, PlayerPlayoffTotalsDataSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Avg, Sum, F, FloatField
+from django.db.models import Avg, Sum, F, FloatField, Min, Max
 from collections import Counter
 import math
 from django.db import connection
@@ -540,6 +540,22 @@ class TopAssistsBySeasonListPlayoffs(generics.ListAPIView):
         season = self.kwargs['season']
         return PlayerPlayoffTotalsData.objects.filter(season=season).order_by('-AST')[:20]
     
+
+class OverallDBStats(APIView):
+    def get(self. request):
+        total_players_regular = PlayerTotalsData.objects.count()
+        total_players_playoffs = PlayerPlayoffAdvancedData.objects.count()
+        regular_season_range = PlayerTotalsData.objects.aggregate(Min('season'), Max('season'))
+        playoffs_season_range = PlayerPlayoffAdvancedData.objects.aggregate(Min('season'), Max('season'))
+        
+        response_data = {
+            'total_players_regular': total_players_regular,
+            'total_players_playoffs': total_players_playoffs,
+            'regular_season_range': regular_season_range,
+            'playoffs_season_range': playoffs_season_range,
+        }
+
+        return Response(response_data)
 
 
 
