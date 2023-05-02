@@ -11,7 +11,7 @@ class HistogramDataSerializer(serializers.Serializer):
     range = serializers.CharField()
     count = serializers.IntegerField()
     
-class PlayerPlayoffTotalsDataSerializer(serializers.Serializer):
+class PlayerPlayoffTotalsDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayerPlayoffTotalsData
         fields = '__all__'

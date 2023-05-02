@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.core import serializers
 from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData, PlayerPlayoffTotalsData, PlayerPlayoffAdvancedData
 from rest_framework import generics
-from .serializers import PlayerDataSerializer, HistogramDataSerializer
+from .serializers import PlayerDataSerializer, HistogramDataSerializer, PlayerPlayoffTotalsDataSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Avg, Sum, F, FloatField
@@ -430,4 +430,16 @@ class Top20ScorersPost2018WS(APIView):
             })
 
         return Response(result)
+    
+
+class TopScorersbySeasonListPlayoffs(generics.ListAPIView):
+    serializer_class = PlayerPlayoffTotalsDataSerializer
+
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerPlayoffTotalsData.objects.filter(season=season).order_by('-PTS')[:20]
+    
+
+
+
 
