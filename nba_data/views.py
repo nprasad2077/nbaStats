@@ -122,6 +122,17 @@ class TopReboundsBySeasonList(generics.ListAPIView):
     def get_queryset(self):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-TRB')[:20]
+    
+# Fetch top 20 players by TRB Totals for season.
+
+class TopReboundsbySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-TRB')[:20]
+    
+    
 
 # Fetch Top 20 players by BLK DESC for specified season.
 
@@ -133,6 +144,18 @@ class TopBlocksBySeasonList(generics.ListAPIView):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-BLK')[:20]
 
+
+
+# Fetch Top 20 players by BLK totals DESC for specified season.
+
+class TopBlocksbySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-BLK')[:20]
+    
+
 # Fetch Top 20 players by STL DESC for season specified.
 
 
@@ -143,6 +166,16 @@ class TopStealsBySeasonList(generics.ListAPIView):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-STL')[:20]
 
+# Fetch Top 20 players by STL totals DESC for season specified.
+
+class TopStealsbySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-STL')[:20]
+    
+
 # Fetch Top 20 players by ORB DESC for season.
 
 
@@ -152,6 +185,15 @@ class TopOffensiveReboundsBySeasonList(generics.ListAPIView):
     def get_queryset(self):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-ORB')[:20]
+    
+# Fetch Top 20 players by ORB totals DESC for season.
+
+class TopOffensiveReboundsbySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-ORB')[:20]
 
 
 # Fetch Top 20 players by DRB DESC for season.
@@ -162,6 +204,15 @@ class TopDefensiveReboundsBySeasonList(generics.ListAPIView):
     def get_queryset(self):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-DRB')[:20]
+
+# Fetch Top 20 players by DRB totals DESC for season.
+
+class TopDefensiveReboundsBySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsDataSerializer.objects.filter(season=season).order_by('-DRB')[:20]
 
 # PTS Histogram
 
