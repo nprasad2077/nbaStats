@@ -110,7 +110,7 @@ class TopAssistsBySeasonTotalsList(generics.ListAPIView):
     
     def get_queryset(self):
         season = self.kwargs['season']
-        return PlayerTotalsData.objects.filter(season=season)
+        return PlayerTotalsData.objects.filter(season=season).order_by('-AST')[:20]
     
 
 # Fetch Top 20 players by TRB DESC for season specified.
@@ -212,7 +212,7 @@ class TopDefensiveReboundsBySeasonTotalsList(generics.ListAPIView):
 
     def get_queryset(self):
         season = self.kwargs['season']
-        return PlayerTotalsDataSerializer.objects.filter(season=season).order_by('-DRB')[:20]
+        return PlayerTotalsData.objects.filter(season=season).order_by('-DRB')[:20]
 
 # PTS Histogram
 
