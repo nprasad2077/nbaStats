@@ -3,7 +3,7 @@ from django.http import JsonResponse, Http404
 from django.core import serializers
 from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData, PlayerPlayoffTotalsData, PlayerPlayoffAdvancedData
 from rest_framework import generics
-from .serializers import PlayerDataSerializer, HistogramDataSerializer, PlayerPlayoffTotalsDataSerializer
+from .serializers import PlayerDataSerializer, HistogramDataSerializer, PlayerPlayoffTotalsDataSerializer, PlayerTotalsDataSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Avg, Sum, F, FloatField, Min, Max
@@ -56,6 +56,14 @@ class TopScorersbySeasonList(generics.ListAPIView):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-PTS')[:20]
 
+# Fetch Top 20 players by total PTS for season.
+class TopScorersbySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-PTS')[:20]
+
 
 # Fetch and calculate the average 3P made, 3P attemps, 2P made, 2P attempts for all players in each season.
 # Will use APIview here instead of generics.ListAPIView to avoid having to create a serializer to generate the queryset. avg_three_made and avg_two_made are new data points at the time of creation when compared to the per_game model.
@@ -94,6 +102,16 @@ class TopAssistsBySeasonList(generics.ListAPIView):
     def get_queryset(self):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-AST')[:20]
+    
+# Fetch Top 20 players by AST totals DESC for the season
+
+class TopAssistsBySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerPlayoffTotalsDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season)
+    
 
 # Fetch Top 20 players by TRB DESC for season specified.
 
