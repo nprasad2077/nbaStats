@@ -3,10 +3,10 @@ from django.http import JsonResponse, Http404
 from django.core import serializers
 from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData, PlayerPlayoffTotalsData, PlayerPlayoffAdvancedData
 from rest_framework import generics
-from .serializers import PlayerDataSerializer, HistogramDataSerializer, PlayerPlayoffTotalsDataSerializer
+from .serializers import PlayerDataSerializer, HistogramDataSerializer, PlayerPlayoffTotalsDataSerializer, PlayerTotalsDataSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Avg, Sum, F, FloatField
+from django.db.models import Avg, Sum, F, FloatField, Min, Max
 from collections import Counter
 import math
 from django.db import connection
@@ -56,6 +56,14 @@ class TopScorersbySeasonList(generics.ListAPIView):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-PTS')[:20]
 
+# Fetch Top 20 players by total PTS for season.
+class TopScorersbySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-PTS')[:20]
+
 
 # Fetch and calculate the average 3P made, 3P attemps, 2P made, 2P attempts for all players in each season.
 # Will use APIview here instead of generics.ListAPIView to avoid having to create a serializer to generate the queryset. avg_three_made and avg_two_made are new data points at the time of creation when compared to the per_game model.
@@ -94,6 +102,16 @@ class TopAssistsBySeasonList(generics.ListAPIView):
     def get_queryset(self):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-AST')[:20]
+    
+# Fetch Top 20 players by AST totals DESC for the season
+
+class TopAssistsBySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerPlayoffTotalsDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-AST')[:20]
+    
 
 # Fetch Top 20 players by TRB DESC for season specified.
 
@@ -104,6 +122,17 @@ class TopReboundsBySeasonList(generics.ListAPIView):
     def get_queryset(self):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-TRB')[:20]
+    
+# Fetch top 20 players by TRB Totals for season.
+
+class TopReboundsbySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-TRB')[:20]
+    
+    
 
 # Fetch Top 20 players by BLK DESC for specified season.
 
@@ -115,6 +144,18 @@ class TopBlocksBySeasonList(generics.ListAPIView):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-BLK')[:20]
 
+
+
+# Fetch Top 20 players by BLK totals DESC for specified season.
+
+class TopBlocksbySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-BLK')[:20]
+    
+
 # Fetch Top 20 players by STL DESC for season specified.
 
 
@@ -125,6 +166,16 @@ class TopStealsBySeasonList(generics.ListAPIView):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-STL')[:20]
 
+# Fetch Top 20 players by STL totals DESC for season specified.
+
+class TopStealsbySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-STL')[:20]
+    
+
 # Fetch Top 20 players by ORB DESC for season.
 
 
@@ -134,6 +185,15 @@ class TopOffensiveReboundsBySeasonList(generics.ListAPIView):
     def get_queryset(self):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-ORB')[:20]
+    
+# Fetch Top 20 players by ORB totals DESC for season.
+
+class TopOffensiveReboundsbySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-ORB')[:20]
 
 
 # Fetch Top 20 players by DRB DESC for season.
@@ -144,6 +204,15 @@ class TopDefensiveReboundsBySeasonList(generics.ListAPIView):
     def get_queryset(self):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-DRB')[:20]
+
+# Fetch Top 20 players by DRB totals DESC for season.
+
+class TopDefensiveReboundsBySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-DRB')[:20]
 
 # PTS Histogram
 
@@ -540,6 +609,22 @@ class TopAssistsBySeasonListPlayoffs(generics.ListAPIView):
         season = self.kwargs['season']
         return PlayerPlayoffTotalsData.objects.filter(season=season).order_by('-AST')[:20]
     
+
+class OverallDBStats(APIView):
+    def get(self, request):
+        total_players_regular = PlayerTotalsData.objects.count()
+        total_players_playoffs = PlayerPlayoffAdvancedData.objects.count()
+        regular_season_range = PlayerTotalsData.objects.aggregate(Min('season'), Max('season'))
+        playoffs_season_range = PlayerPlayoffAdvancedData.objects.aggregate(Min('season'), Max('season'))
+        
+        response_data = {
+            'total_players_regular': total_players_regular,
+            'total_players_playoffs': total_players_playoffs,
+            'regular_season_range': regular_season_range,
+            'playoffs_season_range': playoffs_season_range,
+        }
+
+        return Response(response_data)
 
 
 

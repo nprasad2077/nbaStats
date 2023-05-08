@@ -25,7 +25,7 @@
 	- Websockets or Server-Sent Events
 &nbsp;  
 
-1. Deploy
+1. Deployment
 
 
 
