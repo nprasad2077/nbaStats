@@ -1,12 +1,12 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.core import serializers
 from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData, PlayerPlayoffTotalsData, PlayerPlayoffAdvancedData
 from rest_framework import generics
-from .serializers import PlayerDataSerializer, HistogramDataSerializer
+from .serializers import PlayerDataSerializer, HistogramDataSerializer, PlayerPlayoffTotalsDataSerializer, PlayerTotalsDataSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Avg, Sum, F, FloatField
+from django.db.models import Avg, Sum, F, FloatField, Min, Max
 from collections import Counter
 import math
 from django.db import connection
@@ -56,6 +56,14 @@ class TopScorersbySeasonList(generics.ListAPIView):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-PTS')[:20]
 
+# Fetch Top 20 players by total PTS for season.
+class TopScorersbySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-PTS')[:20]
+
 
 # Fetch and calculate the average 3P made, 3P attemps, 2P made, 2P attempts for all players in each season.
 # Will use APIview here instead of generics.ListAPIView to avoid having to create a serializer to generate the queryset. avg_three_made and avg_two_made are new data points at the time of creation when compared to the per_game model.
@@ -94,6 +102,16 @@ class TopAssistsBySeasonList(generics.ListAPIView):
     def get_queryset(self):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-AST')[:20]
+    
+# Fetch Top 20 players by AST totals DESC for the season
+
+class TopAssistsBySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerPlayoffTotalsDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-AST')[:20]
+    
 
 # Fetch Top 20 players by TRB DESC for season specified.
 
@@ -104,6 +122,17 @@ class TopReboundsBySeasonList(generics.ListAPIView):
     def get_queryset(self):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-TRB')[:20]
+    
+# Fetch top 20 players by TRB Totals for season.
+
+class TopReboundsbySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-TRB')[:20]
+    
+    
 
 # Fetch Top 20 players by BLK DESC for specified season.
 
@@ -115,6 +144,18 @@ class TopBlocksBySeasonList(generics.ListAPIView):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-BLK')[:20]
 
+
+
+# Fetch Top 20 players by BLK totals DESC for specified season.
+
+class TopBlocksbySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-BLK')[:20]
+    
+
 # Fetch Top 20 players by STL DESC for season specified.
 
 
@@ -125,6 +166,16 @@ class TopStealsBySeasonList(generics.ListAPIView):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-STL')[:20]
 
+# Fetch Top 20 players by STL totals DESC for season specified.
+
+class TopStealsbySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+    
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-STL')[:20]
+    
+
 # Fetch Top 20 players by ORB DESC for season.
 
 
@@ -134,6 +185,15 @@ class TopOffensiveReboundsBySeasonList(generics.ListAPIView):
     def get_queryset(self):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-ORB')[:20]
+    
+# Fetch Top 20 players by ORB totals DESC for season.
+
+class TopOffensiveReboundsbySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-ORB')[:20]
 
 
 # Fetch Top 20 players by DRB DESC for season.
@@ -144,6 +204,15 @@ class TopDefensiveReboundsBySeasonList(generics.ListAPIView):
     def get_queryset(self):
         season = self.kwargs['season']
         return PlayerData.objects.filter(season=season).order_by('-DRB')[:20]
+
+# Fetch Top 20 players by DRB totals DESC for season.
+
+class TopDefensiveReboundsBySeasonTotalsList(generics.ListAPIView):
+    serializer_class = PlayerTotalsDataSerializer
+
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerTotalsData.objects.filter(season=season).order_by('-DRB')[:20]
 
 # PTS Histogram
 
@@ -253,118 +322,310 @@ class TopPtsScatterPlotDataFast(APIView):
 
         return Response(result)
     
+
+class TopPtsScatterPlotDataFast2018(APIView):
+    def get(self, request):
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                -- The modified query from earlier
+                WITH player_season_pts AS (
+                  SELECT player_name, season, SUM("PTS") as season_pts
+                  FROM nba_data_playertotalsdata
+                  WHERE player_name IN (SELECT player_name FROM (
+                                           SELECT player_name, SUM("PTS") as total_pts
+                                           FROM nba_data_playertotalsdata
+                                           WHERE season >= 2018
+                                           GROUP BY player_name
+                                           ORDER BY total_pts DESC
+                                           LIMIT 25) as top_25_players)
+                  AND season >= 2018               
+                  GROUP BY player_name, season
+                ),
+                player_season_ws AS (
+                  SELECT player_name, season, SUM("ws") as season_ws
+                  FROM nba_data_playeradvanceddata
+                  WHERE season >= 2018
+                  GROUP BY player_name, season
+                )
+                SELECT player_season_pts.player_name, player_season_pts.season, player_season_pts.season_pts, player_season_ws.season_ws
+                FROM player_season_pts
+                JOIN player_season_ws
+                ON player_season_pts.player_name = player_season_ws.player_name AND player_season_pts.season = player_season_ws.season
+                ORDER BY player_season_pts.player_name, player_season_pts.season;
+            """)
+            rows = cursor.fetchall()
+
+        result = []
+        for row in rows:
+            player_name, season, season_pts, season_ws = row
+            result.append({
+                'player_name': player_name,
+                'season': season,
+                'season_pts': season_pts,
+                'season_ws': season_ws
+            })
+
+        return Response(result)
+
+class TopPtsScatterPlotDataFastSelect(APIView):
+    def get(self, request, season):
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                WITH player_season_pts AS (
+                  SELECT player_name, season, SUM("PTS") as season_pts
+                  FROM nba_data_playertotalsdata
+                  WHERE player_name IN (SELECT player_name FROM (
+                                           SELECT player_name, SUM("PTS") as total_pts
+                                           FROM nba_data_playertotalsdata
+                                           WHERE season >= %s
+                                           GROUP BY player_name
+                                           ORDER BY total_pts DESC
+                                           LIMIT 25) as top_25_players)
+                  AND season >= %s
+                  GROUP BY player_name, season
+                ),
+                player_season_ws AS (
+                  SELECT player_name, season, SUM("ws") as season_ws
+                  FROM nba_data_playeradvanceddata
+                  WHERE season >= %s
+                  GROUP BY player_name, season
+                )
+                SELECT player_season_pts.player_name, player_season_pts.season, player_season_pts.season_pts, player_season_ws.season_ws
+                FROM player_season_pts
+                JOIN player_season_ws
+                ON player_season_pts.player_name = player_season_ws.player_name AND player_season_pts.season = player_season_ws.season
+                ORDER BY player_season_pts.player_name, player_season_pts.season;
+            """, (season, season, season))
+            rows = cursor.fetchall()
+
+        result = []
+        for row in rows:
+            player_name, season, season_pts, season_ws = row
+            result.append({
+                'player_name': player_name,
+                'season': season,
+                'season_pts': season_pts,
+                'season_ws': season_ws
+            })
+
+        return Response(result)
+
+    
     
 # Top 20 players in playoffs by PTS X ws for scatter plot in chart.js
     
 class Top20ScorersPost2009WS(APIView):
     def get(self, request):
-        # Get the top 20 scorers after the 2015 season
-        top_scorers = PlayerPlayoffTotalsData.objects \
-            .filter(season__gt=2009) \
-            .values('player_name') \
-            .annotate(total_pts=Sum('PTS')) \
-            .order_by('-total_pts')[:20]
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                WITH player_playoff_pts AS (
+                  SELECT player_name, season, SUM("PTS") as season_pts
+                  FROM nba_data_playerplayofftotalsdata
+                  WHERE player_name IN (SELECT player_name FROM (
+                                               SELECT player_name, SUM("PTS") as total_pts
+                                               FROM nba_data_playerplayofftotalsdata
+                                               WHERE season >= 2010
+                                               GROUP BY player_name
+                                               ORDER BY total_pts DESC
+                                               LIMIT 25) as top_25_players)
+                  AND season >= 2010               
+                  GROUP BY player_name, season
+                ),
+                player_playoff_ws AS (
+                  SELECT player_name, season, SUM("ws") as season_ws
+                  FROM nba_data_playerplayoffadvanceddata
+                  WHERE season >= 2010
+                  GROUP BY player_name, season
+                )
+                SELECT player_playoff_pts.player_name, player_playoff_pts.season, player_playoff_pts.season_pts, player_playoff_ws.season_ws
+                FROM player_playoff_pts
+                JOIN player_playoff_ws
+                ON player_playoff_pts.player_name = player_playoff_ws.player_name AND player_playoff_pts.season = player_playoff_ws.season
+                ORDER BY player_playoff_pts.player_name, player_playoff_pts.season;
+            """)
+            rows = cursor.fetchall()
 
-        # Get the total WS for each of the top 20 scorers after the 2015 season
-        chart_data = []
-        for scorer in top_scorers:
-            player_name = scorer['player_name']
-            total_ws = PlayerPlayoffAdvancedData.objects \
-                .filter(player_name=player_name, season__gt=2009) \
-                .aggregate(total_ws=Sum('ws'))['total_ws']
-
-            chart_data.append({
-                'x': scorer['total_pts'],
-                'y': total_ws,
-                'player_name': player_name
+        result = []
+        for row in rows:
+            player_name, season, season_pts, season_ws = row
+            result.append({
+                'player_name': player_name,
+                'season': season,
+                'season_pts': season_pts,
+                'season_ws': season_ws
             })
 
-        # Sort the data by total_ws DESC
-        chart_data = sorted(chart_data, key=lambda x: x['y'], reverse=True)
-
-        # Prepare the response data for chart.js
-        response_data = {
-            'datasets': [
-                {
-                    'data': chart_data
-                }
-            ]
-        }
-
-        return Response(response_data)
+        return Response(result)
     
 
 class Top20ScorersPost2014WS(APIView):
     def get(self, request):
-        # Get the top 20 scorers after the 2015 season
-        top_scorers = PlayerPlayoffTotalsData.objects \
-            .filter(season__gt=2014) \
-            .values('player_name') \
-            .annotate(total_pts=Sum('PTS')) \
-            .order_by('-total_pts')[:20]
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                WITH player_playoff_pts AS (
+                  SELECT player_name, season, SUM("PTS") as season_pts
+                  FROM nba_data_playerplayofftotalsdata
+                  WHERE player_name IN (SELECT player_name FROM (
+                                               SELECT player_name, SUM("PTS") as total_pts
+                                               FROM nba_data_playerplayofftotalsdata
+                                               WHERE season >= 2015
+                                               GROUP BY player_name
+                                               ORDER BY total_pts DESC
+                                               LIMIT 25) as top_25_players)
+                  AND season >= 2015               
+                  GROUP BY player_name, season
+                ),
+                player_playoff_ws AS (
+                  SELECT player_name, season, SUM("ws") as season_ws
+                  FROM nba_data_playerplayoffadvanceddata
+                  WHERE season >= 2015
+                  GROUP BY player_name, season
+                )
+                SELECT player_playoff_pts.player_name, player_playoff_pts.season, player_playoff_pts.season_pts, player_playoff_ws.season_ws
+                FROM player_playoff_pts
+                JOIN player_playoff_ws
+                ON player_playoff_pts.player_name = player_playoff_ws.player_name AND player_playoff_pts.season = player_playoff_ws.season
+                ORDER BY player_playoff_pts.player_name, player_playoff_pts.season;
+            """)
+            rows = cursor.fetchall()
 
-        # Get the total WS for each of the top 20 scorers after the 2015 season
-        chart_data = []
-        for scorer in top_scorers:
-            player_name = scorer['player_name']
-            total_ws = PlayerPlayoffAdvancedData.objects \
-                .filter(player_name=player_name, season__gt=2014) \
-                .aggregate(total_ws=Sum('ws'))['total_ws']
-
-            chart_data.append({
-                'x': scorer['total_pts'],
-                'y': total_ws,
-                'player_name': player_name
+        result = []
+        for row in rows:
+            player_name, season, season_pts, season_ws = row
+            result.append({
+                'player_name': player_name,
+                'season': season,
+                'season_pts': season_pts,
+                'season_ws': season_ws
             })
 
-        # Sort the data by total_ws DESC
-        chart_data = sorted(chart_data, key=lambda x: x['y'], reverse=True)
-
-        # Prepare the response data for chart.js
-        response_data = {
-            'datasets': [
-                {
-                    'data': chart_data
-                }
-            ]
-        }
-
-        return Response(response_data)
+        return Response(result)
 
 class Top20ScorersPost2018WS(APIView):
     def get(self, request):
-        # Get the top 20 scorers after the 2015 season
-        top_scorers = PlayerPlayoffTotalsData.objects \
-            .filter(season__gt=2018) \
-            .values('player_name') \
-            .annotate(total_pts=Sum('PTS')) \
-            .order_by('-total_pts')[:20]
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                WITH player_playoff_pts AS (
+                  SELECT player_name, season, SUM("PTS") as season_pts
+                  FROM nba_data_playerplayofftotalsdata
+                  WHERE player_name IN (SELECT player_name FROM (
+                                               SELECT player_name, SUM("PTS") as total_pts
+                                               FROM nba_data_playerplayofftotalsdata
+                                               WHERE season >= 2019
+                                               GROUP BY player_name
+                                               ORDER BY total_pts DESC
+                                               LIMIT 25) as top_25_players)
+                  AND season >= 2019               
+                  GROUP BY player_name, season
+                ),
+                player_playoff_ws AS (
+                  SELECT player_name, season, SUM("ws") as season_ws
+                  FROM nba_data_playerplayoffadvanceddata
+                  WHERE season >= 2019
+                  GROUP BY player_name, season
+                )
+                SELECT player_playoff_pts.player_name, player_playoff_pts.season, player_playoff_pts.season_pts, player_playoff_ws.season_ws
+                FROM player_playoff_pts
+                JOIN player_playoff_ws
+                ON player_playoff_pts.player_name = player_playoff_ws.player_name AND player_playoff_pts.season = player_playoff_ws.season
+                ORDER BY player_playoff_pts.player_name, player_playoff_pts.season;
+            """)
+            rows = cursor.fetchall()
 
-        # Get the total WS for each of the top 20 scorers after the 2015 season
-        chart_data = []
-        for scorer in top_scorers:
-            player_name = scorer['player_name']
-            total_ws = PlayerPlayoffAdvancedData.objects \
-                .filter(player_name=player_name, season__gt=2018) \
-                .aggregate(total_ws=Sum('ws'))['total_ws']
-
-            chart_data.append({
-                'x': scorer['total_pts'],
-                'y': total_ws,
-                'player_name': player_name
+        result = []
+        for row in rows:
+            player_name, season, season_pts, season_ws = row
+            result.append({
+                'player_name': player_name,
+                'season': season,
+                'season_pts': season_pts,
+                'season_ws': season_ws
             })
 
-        # Sort the data by total_ws DESC
-        chart_data = sorted(chart_data, key=lambda x: x['y'], reverse=True)
+        return Response(result)
 
-        # Prepare the response data for chart.js
+class Top25ScorersPostSeasonPlayoffs(APIView):
+    def get(self, request, season):
+        try:
+            season = int(season)
+        except ValueError:
+            raise Http404("Invalid season format.")
+
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                WITH player_playoff_pts AS (
+                  SELECT player_name, season, SUM("PTS") as season_pts
+                  FROM nba_data_playerplayofftotalsdata
+                  WHERE player_name IN (SELECT player_name FROM (
+                                               SELECT player_name, SUM("PTS") as total_pts
+                                               FROM nba_data_playerplayofftotalsdata
+                                               WHERE season >= %s
+                                               GROUP BY player_name
+                                               ORDER BY total_pts DESC
+                                               LIMIT 25) as top_25_players)
+                  AND season >= %s               
+                  GROUP BY player_name, season
+                ),
+                player_playoff_ws AS (
+                  SELECT player_name, season, SUM("ws") as season_ws
+                  FROM nba_data_playerplayoffadvanceddata
+                  WHERE season >= %s
+                  GROUP BY player_name, season
+                )
+                SELECT player_playoff_pts.player_name, player_playoff_pts.season, player_playoff_pts.season_pts, player_playoff_ws.season_ws
+                FROM player_playoff_pts
+                JOIN player_playoff_ws
+                ON player_playoff_pts.player_name = player_playoff_ws.player_name AND player_playoff_pts.season = player_playoff_ws.season
+                ORDER BY player_playoff_pts.player_name, player_playoff_pts.season;
+            """, (season, season, season))
+            rows = cursor.fetchall()
+
+        result = []
+        for row in rows:
+            player_name, season, season_pts, season_ws = row
+            result.append({
+                'player_name': player_name,
+                'season': season,
+                'season_pts': season_pts,
+                'season_ws': season_ws
+            })
+
+        return Response(result)
+
+    
+
+class TopScorersbySeasonListPlayoffs(generics.ListAPIView):
+    serializer_class = PlayerPlayoffTotalsDataSerializer
+
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerPlayoffTotalsData.objects.filter(season=season).order_by('-PTS')[:20]
+    
+
+class TopAssistsBySeasonListPlayoffs(generics.ListAPIView):
+    serializer_class = PlayerPlayoffTotalsDataSerializer
+
+    def get_queryset(self):
+        season = self.kwargs['season']
+        return PlayerPlayoffTotalsData.objects.filter(season=season).order_by('-AST')[:20]
+    
+
+class OverallDBStats(APIView):
+    def get(self, request):
+        total_players_regular = PlayerTotalsData.objects.count()
+        total_players_playoffs = PlayerPlayoffAdvancedData.objects.count()
+        regular_season_range = PlayerTotalsData.objects.aggregate(Min('season'), Max('season'))
+        playoffs_season_range = PlayerPlayoffAdvancedData.objects.aggregate(Min('season'), Max('season'))
+        
         response_data = {
-            'datasets': [
-                {
-                    'data': chart_data
-                }
-            ]
+            'total_players_regular': total_players_regular,
+            'total_players_playoffs': total_players_playoffs,
+            'regular_season_range': regular_season_range,
+            'playoffs_season_range': playoffs_season_range,
         }
 
         return Response(response_data)
+
+
+
 
