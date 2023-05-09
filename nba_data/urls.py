@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import PlayerDataList, PlayerDataByTeamList, PlayerDataBySeasonList, PlayerDataByNameList, TopScorersbySeasonList, TopScorersbySeasonListPlayoffs, ThreeTwoTopPointTrends, TopAssistsBySeasonList, TopReboundsBySeasonList, TopBlocksBySeasonList, TopStealsBySeasonList, TopOffensiveReboundsBySeasonList, TopDefensiveReboundsBySeasonList, PointsPerGameHistogramBySeasonList, TopPtsScatterPlotData, TopPtsScatterPlotDataFast, TopPtsScatterPlotDataFast2018, Top20ScorersPost2009WS, Top20ScorersPost2014WS, Top20ScorersPost2018WS, TopAssistsBySeasonListPlayoffs, Top25ScorersPostSeasonPlayoffs, TopPtsScatterPlotDataFastSelect, OverallDBStats, TopScorersbySeasonTotalsList, TopAssistsBySeasonTotalsList, TopReboundsbySeasonTotalsList, TopStealsbySeasonTotalsList, TopBlocksbySeasonTotalsList, TopDefensiveReboundsBySeasonTotalsList, TopOffensiveReboundsbySeasonTotalsList
+from .views import PlayerDataList, PlayerDataByTeamList, PlayerDataBySeasonList, PlayerDataByNameList, TopScorersbySeasonList, TopScorersbySeasonListPlayoffs, ThreeTwoTopPointTrends, TopAssistsBySeasonList, TopReboundsBySeasonList, TopBlocksBySeasonList, TopStealsBySeasonList, TopOffensiveReboundsBySeasonList, TopDefensiveReboundsBySeasonList, PointsPerGameHistogramBySeasonList, TopPtsScatterPlotData, TopPtsScatterPlotDataFast, TopPtsScatterPlotDataFast2018, Top20ScorersPost2009WS, Top20ScorersPost2014WS, Top20ScorersPost2018WS, TopAssistsBySeasonListPlayoffs, Top25ScorersPostSeasonPlayoffs, TopPtsScatterPlotDataFastSelect, OverallDBStats, TopScorersbySeasonTotalsList, TopAssistsBySeasonTotalsList, TopReboundsbySeasonTotalsList, TopStealsbySeasonTotalsList, TopBlocksbySeasonTotalsList, TopDefensiveReboundsBySeasonTotalsList, TopOffensiveReboundsbySeasonTotalsList, UsageRateHistogramView
 
 urlpatterns = [
     path('api/playerdata/', PlayerDataList.as_view(), name='playerdata_list'),
@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/top_rebounds_defensive/<int:season>/', TopDefensiveReboundsBySeasonList.as_view(), name='top_rebounds_DRB'),
     path('api/top_rebounds_defensive/totals/<int:season>/', TopDefensiveReboundsBySeasonTotalsList.as_view(), name='top_rebounds_DRB_totals'),
     path('api/points_per_game_histogram/<int:season>/', PointsPerGameHistogramBySeasonList.as_view(), name='points_per_game_histogram'),
+    path('api/usage_histogram/<int:season>/', UsageRateHistogramView.as_view(), name='usage_histogram'),
     path('api/top_pts_scatter_plot/', TopPtsScatterPlotData.as_view(), name='top_pts_scatter_plot'),
     path('api/top_pts_scatter_plot_fast/', TopPtsScatterPlotDataFast.as_view(), name='top_pts_scatter_plot_fast'),
     path('api/top_pts_scatter_plot_fast_2018/', TopPtsScatterPlotDataFast2018.as_view(), name='top_pts_scatter_plot_fast_2018'),

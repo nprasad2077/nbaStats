@@ -245,8 +245,40 @@ class PointsPerGameHistogramBySeasonList(generics.ListAPIView):
 
         return histogram_list
 
+# USG Percent Histogram
 
-# Scatter Plot - Top 30 players by total PTS across all seasons in DB. Then map those 30 players on a scatter plot against total PTS/WS for each season.
+class UsageRateHistogramView(generics.ListAPIView):
+    serializer_class = HistogramDataSerializer
+
+    def get_queryset(self):
+        season = self.kwargs['season']
+        queryset = PlayerAdvancedData.objects.filter(season=season)
+
+        # Get the usage rates for each player, ignoring null values
+        usage_rate_list = [player.usg_percent for player in queryset if player.usg_percent is not None]
+
+        # Define histogram bins for usage rate ranges
+        bin_ranges = [i * 5 for i in range(21)]  # 0, 5, 10, ..., 100
+        histogram_data = Counter()
+
+        # Fill the histogram with data
+        for usage_rate in usage_rate_list:
+            bin_index = next(
+                (i for i, r in enumerate(bin_ranges) if r >= usage_rate), -1)
+            if bin_index >= 1:
+                bin_label = f"{bin_ranges[bin_index - 1]}-{bin_ranges[bin_index]}"
+                histogram_data[bin_label] += 1
+
+        # Convert histogram_data to list of dicts for serialization
+        histogram_list = [{"range": k, "count": v}
+                        for k, v in histogram_data.items()]
+
+        return histogram_list
+
+
+
+
+# Scatter Plot - Top 25 players by total PTS across all seasons in DB. Then map those 25 players on a scatter plot against total PTS/WS for each season.
 
 class TopPtsScatterPlotData(APIView):
     def get(self, request, *args, **kwargs):
