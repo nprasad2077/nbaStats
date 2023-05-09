@@ -33,7 +33,7 @@ teams_test = ['HOU', 'PHI', 'BOS']
 
 season = input('What season? ')
 
-for team in teams_test:
+for team in teams:
     url_make = 'https://www.basketball-reference.com/teams/' + team + '/' + season + '.html'
     response = requests.get(url_make)
     
@@ -86,17 +86,17 @@ for team in teams_test:
 
     # save data to database
     
-    # for row in data:
+    for row in data:
         
-    #     row['Salary'] = int(row['Salary'].replace(',', '').replace('$', '')) if row['Salary'] else None
+        row['Salary'] = int(row['Salary'].replace(',', '').replace('$', '')) if row['Salary'] else None
         
-    #     player_data = PlayerSalaryData(
-    #         player_name = row['player_name'],
-    #         salary = row['Salary'],
-    #         team = row['team'],
-    #         season = row['season'],       
-    #     )
-    #     player_data.save()
+        player_data = PlayerSalaryData(
+            player_name = row['player_name'],
+            salary = row['Salary'],
+            team = row['team'],
+            season = row['season'],       
+        )
+        player_data.save()
 
 print('success')
         
