@@ -667,3 +667,6 @@ class PlayerShotChartDataList(generics.ListAPIView):
         season = self.kwargs['season']
         return PlayerShotChartData.objects.filter(player_name__icontains=player_name, season=season).order_by('id')
 
+
+def landing_page(request):
+    return render(request, 'landing.html')
