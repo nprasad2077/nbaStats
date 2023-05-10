@@ -2,10 +2,11 @@ import os
 import sys
 import django
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 import csv
 import json
 import time
+import re
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -13,30 +14,34 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nba_stats.settings')
 django.setup()
 
-from nba_data.models import PlayerAdvancedData
-
+from nba_data.models import PlayerSalaryData
 
 # Change CHO to CHA 2014 and prior.
 # Change NOP to NOH for 2013 and prior.
-# Change BRK to NJN for 2012 and prior.
 # Change OKC to SEA for 2008 and prior.
 # Change NOH to NOK for 2007 and 2006
 # Change NOK to NOH for 2005 and prior.
 # Change NOH to CHH for 2002 and prior. NOLA did not have a team before 2003.
 # Change WAS to WSB for 1997 and prior.
+# Change BRK to NJN for 2012 and prior.
 # Change MEM to VAN for 2001 and prior.
 # Change LAC to SDC for 1984 and prior.
 
-teams = ['HOU' ,'PHI', 'BOS', 'NYK', 'NJN', 'TOR', 'MEM', 'NOH', 'DAL', 'SAS', 'DEN', 'MIN', 'OKC', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHA']
+
+teams = ['HOU' ,'PHI', 'BOS', 'NYK', 'BRK', 'TOR', 'MEM', 'NOP', 'DAL', 'SAS', 'DEN', 'MIN', 'OKC', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHO']
+teams_test = ['HOU', 'PHI', 'BOS']
+
 season = input('What season? ')
 
 for team in teams:
     url_make = 'https://www.basketball-reference.com/teams/' + team + '/' + season + '.html'
     response = requests.get(url_make)
-
-    soup = BeautifulSoup(response.text, "html.parser")
     
-    table = soup.find("table", {"id": "advanced"})
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    comment = soup.find(string=lambda text: isinstance(text, Comment) and "salaries2" in text)
+    table_soup = BeautifulSoup(comment, "html.parser")
+    table = table_soup.find("table", {'class': 'suppress_all stats_table', 'id': 'salaries2'})
 
     if table is None:
         print(f"Table not found for team {team} and season {season}.")
@@ -48,7 +53,8 @@ for team in teams:
 
 
     # Extract coloumn headers
-    headers = [col.text.strip() for col in header_row.find_all("th")][1:]
+    headers = ['player_name']
+    headers.extend([col.text.strip() for col in header_row.find_all("th")][2:])
     headers.extend(['team', 'season'])  # Add 'team' and 'season' fields to headers
 
     # Extract rows as dictionaries
@@ -66,7 +72,7 @@ for team in teams:
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
     # save as CSV file
-    csv_output_path = os.path.join(script_dir, '..', 'data', f'{team}_{season}_advanced_output.csv')
+    csv_output_path = os.path.join(script_dir, '..', 'data', f'{team}_{season}_player_salary_output.csv')
     with open(csv_output_path, "w", newline="") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=headers)
         writer.writeheader()
@@ -74,39 +80,21 @@ for team in teams:
             writer.writerow(row)
 
     # Save as JSON
-    json_output_path = os.path.join(script_dir, '..', 'data', f'{team}_{season}_advanced_output.json')
+    json_output_path = os.path.join(script_dir, '..', 'data', f'{team}_{season}_player_salary_output.json')
     with open(json_output_path, 'w') as jsonfile:
         json.dump(data, jsonfile)
 
     # save data to database
+    
     for row in data:
-        player_data = PlayerAdvancedData(
-            player_name = row['Player'],
-            age = row['Age'],
-            games = row['G'],
-            minutes_played = row['MP'],
-            PER = row['PER'],
-            TS_percent = row['TS%'],
-            three_p_attempt_rate = row['3PAr'],
-            ft_attempt_rate = row['FTr'],
-            orb_percent = row['ORB%'],
-            drb_percent = row['DRB%'],
-            trb_percent = row['TRB%'],
-            ast_percent = row['AST%'],
-            stl_percent = row['STL%'],
-            blk_percent = row['BLK%'],
-            tov_percent = row['TOV%'],
-            usg_percent = row['USG%'],
-            ows = row['OWS'],
-            dws = row['DWS'],
-            ws = row['WS'],
-            ws_per_48 = row['WS/48'],
-            obpm = row['OBPM'],
-            dbpm = row['DBPM'],
-            bpm = row['BPM'],
-            vorp = row['VORP'],
+        
+        row['Salary'] = int(row['Salary'].replace(',', '').replace('$', '')) if row['Salary'] else None
+        
+        player_data = PlayerSalaryData(
+            player_name = row['player_name'],
+            salary = row['Salary'],
             team = row['team'],
-            season = row['season'],
+            season = row['season'],       
         )
         player_data.save()
 
