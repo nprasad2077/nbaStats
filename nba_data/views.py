@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.http import JsonResponse, Http404
 from django.core import serializers
-from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData, PlayerPlayoffTotalsData, PlayerPlayoffAdvancedData
+from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData, PlayerPlayoffTotalsData, PlayerPlayoffAdvancedData, PlayerShotChartData
 from rest_framework import generics
-from .serializers import PlayerDataSerializer, HistogramDataSerializer, PlayerPlayoffTotalsDataSerializer, PlayerTotalsDataSerializer
+from .serializers import PlayerDataSerializer, HistogramDataSerializer, PlayerPlayoffTotalsDataSerializer, PlayerTotalsDataSerializer, PlayerShotChartDataSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Avg, Sum, F, FloatField, Min, Max
+from django.db.models import Avg, Sum, F, Min, Max
 from collections import Counter
 import math
 from django.db import connection
@@ -659,5 +659,11 @@ class OverallDBStats(APIView):
         return Response(response_data)
 
 
-
+class PlayerShotChartDataList(generics.ListAPIView):
+    serializer_class = PlayerShotChartDataSerializer
+    
+    def get_queryset(self):
+        player_name = self.kwargs['player_name']
+        season = self.kwargs['season']
+        return PlayerShotChartData.objects.filter(player_name__icontains=player_name, season=season).order_by('id')
 

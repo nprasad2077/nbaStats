@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import PlayerDataList, PlayerDataByTeamList, PlayerDataBySeasonList, PlayerDataByNameList, TopScorersbySeasonList, TopScorersbySeasonListPlayoffs, ThreeTwoTopPointTrends, TopAssistsBySeasonList, TopReboundsBySeasonList, TopBlocksBySeasonList, TopStealsBySeasonList, TopOffensiveReboundsBySeasonList, TopDefensiveReboundsBySeasonList, PointsPerGameHistogramBySeasonList, TopPtsScatterPlotData, TopPtsScatterPlotDataFast, TopPtsScatterPlotDataFast2018, Top20ScorersPost2009WS, Top20ScorersPost2014WS, Top20ScorersPost2018WS, TopAssistsBySeasonListPlayoffs, Top25ScorersPostSeasonPlayoffs, TopPtsScatterPlotDataFastSelect, OverallDBStats, TopScorersbySeasonTotalsList, TopAssistsBySeasonTotalsList, TopReboundsbySeasonTotalsList, TopStealsbySeasonTotalsList, TopBlocksbySeasonTotalsList, TopDefensiveReboundsBySeasonTotalsList, TopOffensiveReboundsbySeasonTotalsList, UsageRateHistogramView
+from .views import PlayerDataList, PlayerDataByTeamList, PlayerDataBySeasonList, PlayerDataByNameList, TopScorersbySeasonList, TopScorersbySeasonListPlayoffs, ThreeTwoTopPointTrends, TopAssistsBySeasonList, TopReboundsBySeasonList, TopBlocksBySeasonList, TopStealsBySeasonList, TopOffensiveReboundsBySeasonList, TopDefensiveReboundsBySeasonList, PointsPerGameHistogramBySeasonList, TopPtsScatterPlotData, TopPtsScatterPlotDataFast, TopPtsScatterPlotDataFast2018, Top20ScorersPost2009WS, Top20ScorersPost2014WS, Top20ScorersPost2018WS, TopAssistsBySeasonListPlayoffs, Top25ScorersPostSeasonPlayoffs, TopPtsScatterPlotDataFastSelect, OverallDBStats, TopScorersbySeasonTotalsList, TopAssistsBySeasonTotalsList, TopReboundsbySeasonTotalsList, TopStealsbySeasonTotalsList, TopBlocksbySeasonTotalsList, TopDefensiveReboundsBySeasonTotalsList, TopOffensiveReboundsbySeasonTotalsList, UsageRateHistogramView, PlayerShotChartDataList
 
 urlpatterns = [
     path('api/playerdata/', PlayerDataList.as_view(), name='playerdata_list'),
@@ -34,4 +34,5 @@ urlpatterns = [
     path('api/top_25_PTS_ws/playoffs/<int:season>/', Top25ScorersPostSeasonPlayoffs.as_view(), name='top_25_PTS_ws_playoffs'),
     path('api/top_25_PTS_ws/season/<int:season>/', TopPtsScatterPlotDataFastSelect.as_view(), name='top_25_PTS_ws_season'),
     path('api/stats/', OverallDBStats.as_view(), name='overall_db_stats'),
+    path('api/shot_chart_data/<str:player_name>/<str:season>/', PlayerShotChartDataList.as_view(), name='player_shot_chart'),
 ]

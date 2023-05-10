@@ -37,8 +37,13 @@ class PlayerSalaryDataSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PlayerShotChartDataSerializer(serializers.ModelSerializer):
+    color = serializers.SerializerMethodField()
+    
     class Meta:
         model = PlayerShotChartData
-        fields = '__all__'
+        fields = ['top', 'left', 'date', 'qtr', 'time_remaining', 'result', 'shot_type', 'distance_ft', 'lead', 'lebron_team_score', 'opponent_team_score', 'opponent', 'team', 'season', 'color']
+        
+    def get_color(self, obj):
+        return 'green' if obj.result else 'red'
         
 
