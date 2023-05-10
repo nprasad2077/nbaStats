@@ -216,7 +216,7 @@ class PlayerShotChartData(models.Model):
     left = models.IntegerField(null=True)
     date = models.CharField(max_length=255,  default='')
     qtr = models.CharField(max_length=6,  default='')
-    time_remaining = models.IntegerField(null=True)
+    time_remaining = models.CharField(max_length=12,  default='')
     result = models.BooleanField(null=True)
     shot_type = models.CharField(max_length=6,  default='')
     distance_ft = models.IntegerField(null=True)
