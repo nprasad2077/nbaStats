@@ -1,6 +1,6 @@
 # Serializers are defined that will convert model instances to JSON
 from rest_framework import serializers
-from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData, PlayerPlayoffTotalsData, PlayerPlayoffAdvancedData, PlayerSalaryData
+from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData, PlayerPlayoffTotalsData, PlayerPlayoffAdvancedData, PlayerSalaryData, PlayerShotChartData
 
 class PlayerDataSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,6 +34,11 @@ class PlayerPlayoffAdvancedDataSerializer(serializers.ModelSerializer):
 class PlayerSalaryDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayerSalaryData
+        fields = '__all__'
+
+class PlayerShotChartDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlayerShotChartData
         fields = '__all__'
         
 
