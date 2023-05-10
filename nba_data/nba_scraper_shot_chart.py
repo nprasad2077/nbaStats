@@ -13,7 +13,8 @@ django.setup()
 from nba_data.models import PlayerShotChartData
 
 player_name = 'LeBron James'
-season = 2016
+season = 2022
+# team = 'LAL'  # You might want to find a way to get this from the webpage
 url = 'https://www.basketball-reference.com/players/j/jamesle01/shooting/' + str(season)
 
 response = requests.get(url)
@@ -28,8 +29,6 @@ shot_chart = shot_chart_soup.find("div", {"id": "shot-wrapper"})
 
 shots = shot_chart.find_all("div", {"class": ["tooltip make", "tooltip miss"]})
 
-team = 'CLE'  # You might want to find a way to get this from the webpage
-
 # save data to database and CSV
 shot_chart_data = []
 
@@ -39,12 +38,13 @@ for shot_div in shots:
     top_value = int(style_values[0].split(':')[1].replace('px', '').strip())
     left_value = int(style_values[1].split(':')[1].replace('px', '').strip())
 
-     # Parse tip attribute
+    # Parse tip attribute
     tip_parts = shot_div['tip'].split('<br>')
 
     # Within your loop:
     date_and_opponent = re.split(' at | vs ', tip_parts[0])
     date = date_and_opponent[0].strip().split(',')[0] + ',' + date_and_opponent[0].strip().split(',')[1]
+    team = date_and_opponent[0].strip().split(',')[2].strip()
     opponent = date_and_opponent[1].strip()
 
     quarter_and_time = tip_parts[1].split(',')
@@ -92,5 +92,11 @@ with open(csv_output_path, "w", newline="") as csvfile:
     writer.writeheader()
     for row in shot_chart_data:
         writer.writerow(row)
+        
+# Save the records in the database
+PlayerShotChartData.objects.bulk_create(
+    PlayerShotChartData(**row) for row in shot_chart_data
+)
+
 
 print('success')
