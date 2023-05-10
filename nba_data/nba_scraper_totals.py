@@ -15,8 +15,19 @@ django.setup()
 
 from nba_data.models import PlayerTotalsData
 
-teams = ['HOU' ,'PHI', 'BOS', 'NYK', 'BRK', 'TOR', 'MEM', 'NOP', 'DAL', 'SAS', 'DEN', 'MIN', 'OKC', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHO']
-team_abbreviations = ['ATL', 'BOS', 'BRK', 'CHI', 'CHO', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NYK', 'OKC', 'ORL', 'PHI', 'PHO', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS']
+# Change CHO to CHA 2014 and prior.
+# Change NOP to NOH for 2013 and prior.
+# Change OKC to SEA for 2008 and prior.
+# Change NOH to NOK for 2007 and 2006
+# Change NOK to NOH for 2005 and prior.
+# Change NOH to CHH for 2002 and prior. NOLA did not have a team before 2003.
+# Change WAS to WSB for 1997 and prior.
+# Change BRK to NJN for 2012 and prior.
+# Change MEM to VAN for 2001 and prior.
+# Change LAC to SDC for 1984 and prior.
+
+teams = ['HOU' ,'PHI', 'BOS', 'NYK', 'NJN', 'TOR', 'MEM', 'NOH', 'DAL', 'SAS', 'DEN', 'MIN', 'OKC', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHA']
+
 
 # team = input('What team? ') 
 #  OMIT above. Will now only ask for season and iterate thru teams list.

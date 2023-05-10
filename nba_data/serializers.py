@@ -1,6 +1,6 @@
 # Serializers are defined that will convert model instances to JSON
 from rest_framework import serializers
-from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData, PlayerPlayoffTotalsData, PlayerPlayoffAdvancedData
+from .models import PlayerData, PlayerTotalsData, PlayerAdvancedData, PlayerPlayoffTotalsData, PlayerPlayoffAdvancedData, PlayerSalaryData, PlayerShotChartData
 
 class PlayerDataSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,5 +30,20 @@ class PlayerPlayoffAdvancedDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayerPlayoffAdvancedData
         fields = '__all__'
+
+class PlayerSalaryDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlayerSalaryData
+        fields = '__all__'
+
+class PlayerShotChartDataSerializer(serializers.ModelSerializer):
+    color = serializers.SerializerMethodField()
     
+    class Meta:
+        model = PlayerShotChartData
+        fields = ['top', 'left', 'date', 'qtr', 'time_remaining', 'result', 'shot_type', 'distance_ft', 'lead', 'lebron_team_score', 'opponent_team_score', 'opponent', 'team', 'season', 'color']
+        
+    def get_color(self, obj):
+        return 'green' if obj.result else 'red'
+        
 
