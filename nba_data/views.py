@@ -62,7 +62,7 @@ class TopScorersbySeasonTotalsList(generics.ListAPIView):
     
     def get_queryset(self):
         season = self.kwargs['season']
-        return PlayerTotalsData.objects.filter(season=season).order_by('-PTS')[:20]
+        return PlayerTotalsData.objects.filter(season=season).order_by('-PTS')[:200]
 
 
 # Fetch and calculate the average 3P made, 3P attemps, 2P made, 2P attempts for all players in each season.
