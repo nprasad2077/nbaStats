@@ -631,7 +631,7 @@ class TopScorersbySeasonListPlayoffs(generics.ListAPIView):
 
     def get_queryset(self):
         season = self.kwargs['season']
-        return PlayerPlayoffTotalsData.objects.filter(season=season).order_by('-PTS')[:20]
+        return PlayerPlayoffTotalsData.objects.filter(season=season).order_by('-PTS')[:200]
     
 
 class TopAssistsBySeasonListPlayoffs(generics.ListAPIView):
