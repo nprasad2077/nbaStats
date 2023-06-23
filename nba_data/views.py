@@ -32,20 +32,20 @@ class PlayerDataByTeamList(generics.ListAPIView):
 
 # Fetch player data by season
 class PlayerDataBySeasonList(generics.ListAPIView):
-    serializer_class = PlayerDataSerializer
+    serializer_class = PlayerTotalsDataSerializer
 
     def get_queryset(self):
         season = self.kwargs['season']
-        return PlayerData.objects.filter(season=season)
+        return PlayerTotalsData.objects.filter(season=season)
 
 
 # Fetch player data by player name
 class PlayerDataByNameList(generics.ListAPIView):
-    serializer_class = PlayerDataSerializer
+    serializer_class = PlayerTotalsDataSerializer
 
     def get_queryset(self):
         name = self.kwargs['name']
-        return PlayerData.objects.filter(name__icontains=name)
+        return PlayerTotalsData.objects.filter(name__icontains=name)
 
 
 # Fetch Top 20 players by PTS DESC for the season specified.
