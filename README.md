@@ -6,6 +6,13 @@ This documentation provides the necessary information to use the NBA Stats API. 
 
 ---
 
+# [View API Documentation](https://documenter.getpostman.com/view/24232555/2s93shzpR3)
+
+
+
+---
+
+
 ### Base URL
 
 All URLs referenced in this documentation use the following base URL:
