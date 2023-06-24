@@ -104,7 +104,6 @@ Content:
 	...
 	]
 }		
-
 ```
 
 All Players in Season
@@ -191,6 +190,7 @@ Content:
 	]
 }
 
-	
-
 ```
+## Reference
+
+All statistics are referenced from [basketball-reference.com](https://www.basketball-reference.com/)
