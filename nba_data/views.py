@@ -30,22 +30,22 @@ class PlayerDataByTeamList(generics.ListAPIView):
         return PlayerData.objects.filter(team=team)
 
 
-# Fetch player data by season
+# Fetch player totals data by season
 class PlayerDataBySeasonList(generics.ListAPIView):
-    serializer_class = PlayerDataSerializer
+    serializer_class = PlayerTotalsDataSerializer
 
     def get_queryset(self):
         season = self.kwargs['season']
-        return PlayerData.objects.filter(season=season)
+        return PlayerTotalsData.objects.filter(season=season)
 
 
-# Fetch player data by player name
+# Fetch player totals data by player name
 class PlayerDataByNameList(generics.ListAPIView):
-    serializer_class = PlayerDataSerializer
+    serializer_class = PlayerTotalsDataSerializer
 
     def get_queryset(self):
         name = self.kwargs['name']
-        return PlayerData.objects.filter(name__icontains=name)
+        return PlayerTotalsData.objects.filter(player_name__icontains=name)
 
 
 # Fetch Top 20 players by PTS DESC for the season specified.
@@ -62,7 +62,7 @@ class TopScorersbySeasonTotalsList(generics.ListAPIView):
     
     def get_queryset(self):
         season = self.kwargs['season']
-        return PlayerTotalsData.objects.filter(season=season).order_by('-PTS')[:20]
+        return PlayerTotalsData.objects.filter(season=season).order_by('-PTS')[:200]
 
 
 # Fetch and calculate the average 3P made, 3P attemps, 2P made, 2P attempts for all players in each season.
@@ -631,7 +631,7 @@ class TopScorersbySeasonListPlayoffs(generics.ListAPIView):
 
     def get_queryset(self):
         season = self.kwargs['season']
-        return PlayerPlayoffTotalsData.objects.filter(season=season).order_by('-PTS')[:20]
+        return PlayerPlayoffTotalsData.objects.filter(season=season).order_by('-PTS')[:200]
     
 
 class TopAssistsBySeasonListPlayoffs(generics.ListAPIView):

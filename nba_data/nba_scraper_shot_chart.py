@@ -12,10 +12,10 @@ django.setup()
 
 from nba_data.models import PlayerShotChartData
 
-player_name = 'LeBron James'
-season = 2014
+player_name = 'James Harden'
+season = 2010
 # team = 'LAL'  # You might want to find a way to get this from the webpage
-url = 'https://www.basketball-reference.com/players/j/jamesle01/shooting/' + \
+url = 'https://www.basketball-reference.com/players/h/hardeja01/shooting/' + \
     str(season)
 
 response = requests.get(url)
@@ -110,4 +110,4 @@ try:
 except Exception as e:
     print(f"Error inserting data into database: {e}")
 
-print('success')
+print(f"success {player_name} {season}")
