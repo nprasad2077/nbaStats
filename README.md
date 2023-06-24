@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This documentation provides the necessary information to use the NBA Stats API. These APIs provide access to NBA season and playoff totals, advanced statistics, shot chart data, and more.
+This documentation provides the necessary information to use the NBA Stats API. These APIs provide access to NBA season and playoff totals, advanced statistics, shot chart data, and more. Stats are referenced from [basketball-reference.com](https://www.basketball-reference.com/)
 
 ---
 
