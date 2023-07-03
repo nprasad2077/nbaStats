@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This documentation provides the necessary information to use the NBA Stats API. These APIs provide access to NBA season and playoff totals, advanced statistics, shot chart data, and more. Stats are referenced from [basketball-reference.com](https://www.basketball-reference.com/)
+This documentation provides the necessary information to use the NBA Stats API. These APIs provide access to NBA season and playoff totals, advanced statistics, shot chart data, and more. Stats are cross-referenced with [basketball-reference.com](https://www.basketball-reference.com/) and [NBA.com](https://www.nba.com/stats).
 
 ---
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24232555-37df4890-6773-45e1-b94d-4fc6dc689a36?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D24232555-37df4890-6773-45e1-b94d-4fc6dc689a36%26entityType%3Dcollection%26workspaceId%3De70e9dd7-65ac-4368-9e92-dadb45dfe681)
