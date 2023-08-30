@@ -17,7 +17,65 @@ All URLs referenced in this documentation use the following base URL:
 
 https://nba-stats-db.herokuapp.com/
 
-### Endpoint Examples
+
+
+#  Installation
+
+To start this django server, the first thing you should do is create a local python environment to work with. 
+
+
+
+To install all the dependencies and initialize the environments in your Django project, you can follow these steps:
+
+1. Make sure you have Python installed on your system. You can check if Python is installed by running the following command in your terminal or command prompt:
+   ```
+   python --version
+   ```
+   If Python is not installed, you can download and install it from the official Python website.
+
+2. Create a virtual environment for your Django project. A virtual environment allows you to isolate your project's dependencies from the rest of your system. To create a virtual environment, open your terminal or command prompt and navigate to the root directory of your project. Then, run the following command:
+   ```
+   python -m venv myenv
+   ```
+   This will create a new virtual environment named "myenv" (you can choose any name you prefer).
+
+3. Activate the virtual environment. The activation process differs depending on your operating system:
+   - On Windows, run the following command:
+     ```
+     myenv\Scripts\activate
+     ```
+   - On macOS and Linux, run the following command:
+     ```
+     source myenv/bin/activate
+     ```
+
+4. Once the virtual environment is activated, you can proceed to installing the project's dependencies. Typically, the dependencies are listed in a "requirements.txt" file located in the root directory of your project. Run the following command to install the dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+   This will read the requirements from the "requirements.txt" file and install all the necessary packages.
+
+5. After the dependencies are installed, you need to initialize the database. To do this, run the following command:
+   ```
+   python manage.py migrate
+   ```
+   This will apply any pending database migrations.
+
+6. Finally, you can start the development server with the following command:
+   ```
+   python manage.py runserver
+   ```
+   This will start the Django development server, and you should be able to access your project at http://localhost:8000/.
+
+That's it! You have now installed all the dependencies and initialized the environments in your Django project.
+
+
+
+
+
+
+
+# Endpoint Examples
 
 <details>
 <summary>Search by Player Name</summary>
