@@ -28,6 +28,7 @@ from nba_data.models import PlayerAdvancedData
 # Change LAC to SDC for 1984 and prior.
 
 teams = ['HOU' ,'PHI', 'BOS', 'NYK', 'NJN', 'TOR', 'MEM', 'NOH', 'DAL', 'SAS', 'DEN', 'MIN', 'OKC', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHA']
+
 season = input('What season? ')
 
 for team in teams:
