@@ -8,29 +8,27 @@ This documentation provides the necessary information to use the NBA Stats API. 
 
 # [View API Documentation](https://documenter.getpostman.com/view/24232555/2s93shzpR3)
 
-
-
 ---
-
 
 ### Base URL
 
 All URLs referenced in this documentation use the following base URL:
 
-> https://nba-stats-db.herokuapp.com/
+> <https://nba-stats-db.herokuapp.com/>
 
 ### Endpoints
 
 Top 20 Scorers by Season
 Method: `Get`
 
-> https://nba-stats-db.herokuapp.com/api/playerdata/topscorers/total/season/2023/
+> <https://nba-stats-db.herokuapp.com/api/playerdata/topscorers/total/season/2023/>
 
 Success Response:
 
 `Code: 200`
 
 Content:
+
 ```
 {
     "count": 20,
@@ -101,22 +99,23 @@ Content:
             "team": "PHI",
             "season": 2023
         },
-	...
-	]
-}		
+ ...
+ ]
+}  
 
 ```
 
 Top 20 Scorers in Playoffs
 Method: `Get`
 
-> https://nba-stats-db.herokuapp.com/api/playerdata/topscorers/playoffs/2022/
+> <https://nba-stats-db.herokuapp.com/api/playerdata/topscorers/playoffs/2022/>
 
 Success Response:
 
 `Code: 200`
 
 Content:
+
 ```
 {
     "count": 20,
@@ -187,22 +186,23 @@ Content:
             "team": "GSW",
             "season": 2022
         },
-	...
-	]
-}		
+ ...
+ ]
+}  
 
 ```
 
 Top 20 Assists by Season
 Method: `Get`
 
-> https://nba-stats-db.herokuapp.com/api/top_assists/totals/2023/
+> <https://nba-stats-db.herokuapp.com/api/top_assists/totals/2023/>
 
 Success Response:
 
 `Code: 200`
 
 Content:
+
 ```
 {
     "count": 20,
@@ -273,23 +273,23 @@ Content:
             "team": "DEN",
             "season": 2023
         },
-	...
-	]
-}		
+ ...
+ ]
+}  
 
 ```
 
 Top 20 Assists in Playoffs
 Method: `Get`
 
-> https://nba-stats-db.herokuapp.com/api/top_assists/playoffs/2022/
-
+> <https://nba-stats-db.herokuapp.com/api/top_assists/playoffs/2022/>
 
 Success Response:
 
 `Code: 200`
 
 Content:
+
 ```
 {
     "count": 20,
@@ -360,22 +360,23 @@ Content:
             "team": "GSW",
             "season": 2022
         },
-	...
-	]
-}		
+ ...
+ ]
+}  
 
 ```
 
 Top 20 Rebounders (Total Rebounds) by Season
 Method: `Get`
 
-> https://nba-stats-db.herokuapp.com/api/top_rebounds/totals/2023/
+> <https://nba-stats-db.herokuapp.com/api/top_rebounds/totals/2023/>
 
 Success Response:
 
 `Code: 200`
 
 Content:
+
 ```
 {
     "count": 20,
@@ -446,9 +447,9 @@ Content:
             "team": "CHI",
             "season": 2023
         },
-	...
-	]
-}		
+ ...
+ ]
+}  
 
 ```
 
