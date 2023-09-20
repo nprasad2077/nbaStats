@@ -34,7 +34,7 @@ season = input('What season? ')
 
 teams2 = 'PHI'
 
-for team in teams2:
+for team in teams_data:
     url_make = 'https://www.basketball-reference.com/teams/' + team + '/' + season + '.html'
     response = requests.get(url_make)
 
