@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import csv
 import json
 import time
+from data import teams_data
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -29,13 +30,11 @@ from nba_data.models import PlayerPlayoffAdvancedData
 
 teams = ['HOU' ,'PHI', 'BOS', 'NYK', 'NJN', 'TOR', 'MEM', 'NOH', 'DAL', 'SAS', 'DEN', 'MIN', 'OKC', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHA']
 
-teams2 = ['HOU' ,'PHI', 'NYK', 'NJN', 'TOR', 'MEM', 'NOH', 'SAS', 'DEN', 'MIN', 'OKC', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHA']
-
-team_abbreviations = ['ATL', 'BOS', 'BRK', 'CHI', 'CHO', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NYK', 'OKC', 'ORL', 'PHI', 'PHO', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS']
-
 season = input('What season? ')
 
-for team in teams:
+teams2 = 'PHI'
+
+for team in teams2:
     url_make = 'https://www.basketball-reference.com/teams/' + team + '/' + season + '.html'
     response = requests.get(url_make)
 

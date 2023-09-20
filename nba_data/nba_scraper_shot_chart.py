@@ -12,10 +12,11 @@ django.setup()
 
 from nba_data.models import PlayerShotChartData
 
-player_name = 'James Harden'
-season = 2010
-# team = 'LAL'  # You might want to find a way to get this from the webpage
-url = 'https://www.basketball-reference.com/players/h/hardeja01/shooting/' + \
+player_name = 'Damian Lillard'
+season = 2013
+
+# Player name and season will be inserted into DB. Modify before running script. 
+url = 'https://www.basketball-reference.com/players/l/lillada01/shooting/' + \
     str(season)
 
 response = requests.get(url)
