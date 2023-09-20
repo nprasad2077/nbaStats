@@ -79,7 +79,7 @@ class PlayerAdvancedData(models.Model):
     PER = models.DecimalField(max_digits=6, decimal_places=1, null=True)
     TS_percent = models.DecimalField(max_digits=5, decimal_places=3, null=True)
     three_p_attempt_rate = models.DecimalField(max_digits=5, decimal_places=3, null=True)
-    ft_attempt_rate = models.DecimalField(max_digits=5, decimal_places=3, null=True)
+    ft_attempt_rate = models.DecimalField(max_digits=8, decimal_places=3, null=True)
     orb_percent = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     drb_percent = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     trb_percent = models.DecimalField(max_digits=5, decimal_places=2, null=True)
