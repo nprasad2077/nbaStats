@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import csv
 import json
 import time
+from data import teams_data
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -31,7 +32,9 @@ teams = ['HOU' ,'PHI', 'BOS', 'NYK', 'NJN', 'TOR', 'MEM', 'NOH', 'DAL', 'SAS', '
 
 season = input('What season? ')
 
-for team in teams:
+teams2 = 'PHI'
+
+for team in teams2:
     url_make = 'https://www.basketball-reference.com/teams/' + team + '/' + season + '.html'
     response = requests.get(url_make)
 

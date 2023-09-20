@@ -1,0 +1,1 @@
+teams_data = ['HOU' ,'PHI', 'BOS', 'NYK', 'NJN', 'TOR', 'MEM', 'NOK', 'DAL', 'SAS', 'DEN', 'MIN', 'SEA', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHA']

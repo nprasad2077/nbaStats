@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import csv
 import json
 import time
+from data import teams_data
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -26,14 +27,14 @@ from nba_data.models import PlayerTotalsData
 # Change MEM to VAN for 2001 and prior.
 # Change LAC to SDC for 1984 and prior.
 
-teams = ['HOU' ,'PHI', 'BOS', 'NYK', 'NJN', 'TOR', 'MEM', 'NOH', 'DAL', 'SAS', 'DEN', 'MIN', 'OKC', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHA']
+teams = ['HOU' ,'PHI', 'BOS', 'NYK', 'NJN', 'TOR', 'MEM', 'NOH', 'DAL', 'SAS', 'DEN', 'MIN', 'SEA', 'UTA', 'POR', 'MIL', 'CLE', 'CHI', 'IND', 'DET', 'SAC', 'PHO', 'GSW', 'LAC', 'LAL', 'MIA', 'ATL', 'WAS', 'ORL', 'CHA']
 
 
 # team = input('What team? ') 
 #  OMIT above. Will now only ask for season and iterate thru teams list.
 season = input('What season? ')
 
-for team in teams:
+for team in teams_data:
     url_make = 'https://www.basketball-reference.com/teams/' + team + '/' + season + '.html'
     response = requests.get(url_make)
 
