@@ -1,5 +1,7 @@
 # NBA Stats API 0.1 Beta
 
+## View the new and updated GraphQL API [here.](https://github.com/nprasad2077/NBA_GraphQL) 🏀⛹️
+
 ## Introduction
 
 This documentation provides the necessary information to use the NBA Stats API. These APIs provide access to NBA season and playoff totals, advanced statistics, shot chart data, and more. Stats are cross-referenced with [basketball-reference.com](https://www.basketball-reference.com/) and [NBA.com](https://www.nba.com/stats).
