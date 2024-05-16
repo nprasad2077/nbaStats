@@ -1,6 +1,6 @@
 # NBA Stats API 0.1 Beta
 
-## View the new and updated GraphQL API [here.](https://github.com/nprasad2077/NBA_GraphQL) 🏀⛹️
+## ‼️View the new and updated GraphQL API [here.](https://github.com/nprasad2077/NBA_GraphQL) 🏀⛹️
 
 ## Introduction
 
