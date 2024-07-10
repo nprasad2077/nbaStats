@@ -1,6 +1,6 @@
 # NBA Stats API 0.1 Beta
 
-## ‼️View the new and updated REST API [here.](http://b8c40s8.143.198.70.30.sslip.io/index.html) 🔎✅🏀📎👽👾🤖🏆
+## ‼️View the new and updated REST API [here.](http://rest.nbaapi.com/index.html) 🔎✅🏀📎👽👾🤖🏆
 ## ‼️View the new and updated GraphQL API [here.](https://github.com/nprasad2077/NBA_GraphQL) 🏀⛹️
 
 ## Introduction
