@@ -1,328 +1,281 @@
-# NBA Stats API 0.1 Beta
+# NBA Stats API 2.0
 
-## ‼️View the new and updated REST API [here.](http://rest.nbaapi.com/index.html) 🔎✅🏀📎👽👾🤖🏆
-## ‼️View the new and updated GraphQL API [here.](https://github.com/nprasad2077/NBA_GraphQL) 🏀⛹️
+## 🔎 View the Interactive API Documentation
+**[Interactive Swagger Documentation](https://api.server.nbaapi.com/swagger/index.html)** - Complete API reference with live testing capabilities
 
 ## Introduction
 
-This documentation provides the necessary information to use the NBA Stats API. These APIs provide access to NBA season and playoff totals, advanced statistics, shot chart data, and more. Stats are cross-referenced with [basketball-reference.com](https://www.basketball-reference.com/) and [NBA.com](https://www.nba.com/stats).
+This documentation provides comprehensive information for using the NBA Stats API. The API offers access to NBA season and playoff statistics, including player totals, advanced metrics, and historical data. All statistics are cross-referenced with [basketball-reference.com](https://www.basketball-reference.com/) and [NBA.com](https://www.nba.com/stats).
 
----
-[<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://god.gw.postman.com/run-collection/25652688-483c72bc-2588-4b7e-b9f9-30c3f5f2ebcc?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D25652688-483c72bc-2588-4b7e-b9f9-30c3f5f2ebcc%26entityType%3Dcollection%26workspaceId%3Dbb6fcb02-8388-4ce0-8623-63480a6dc153)
+# NBA Player Statistics API
 
-## [View 2025 API Documentation](https://www.postman.com/solar-meadow-682296/nba-stats/collection/eti4u40/nba-stats-api)
-
----
-
-# NBA Player Data API
-
-This API provides endpoints to query NBA player statistics, including both "Totals" data and "Advanced" statistical data. Each endpoint supports filtering, sorting, and pagination options to help you retrieve the data you need.
-
-[<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://god.gw.postman.com/run-collection/25652688-483c72bc-2588-4b7e-b9f9-30c3f5f2ebcc?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D25652688-483c72bc-2588-4b7e-b9f9-30c3f5f2ebcc%26entityType%3Dcollection%26workspaceId%3Dbb6fcb02-8388-4ce0-8623-63480a6dc153)
+This API provides endpoints to query NBA player statistics, including both "Totals" data and "Advanced" statistical data. Each endpoint supports filtering, sorting, and pagination options to help you retrieve exactly the data you need.
 
 ## Base URL
 
-All endpoints are served from the base URL:
+All API endpoints are served from:
 
 ```
-http://rest.nbaapi.com
+https://api.server.nbaapi.com/
 ```
 
 ## Authentication
 
 No authentication is currently required for these endpoints.
 
-## Endpoints Overview
+## Available Endpoints
 
-- **Player Data Totals** (`/playerdatatotals`)
+- **Player Advanced Stats** (`/api/playeradvancedstats`)
+  
+  Provides advanced player metrics including Player Efficiency Rating (PER), True Shooting Percentage (TS%), Usage Percentage, Win Shares, VORP, and other advanced analytics.
 
-  Provides season-based totals such as points, assists, games played, and more.
+- **Player Totals** (`/api/playertotals`)
 
-- **Player Data Advanced** (`/playerdataadvanced`)
-
-  Provides advanced player metrics such as Player Efficiency Rating (PER), True Shooting Percentage (TS%), Usage Percentage, Win Shares, and other advanced stats.
-
-Both endpoints offer similar querying patterns and filtering options.
+  Provides season-based totals such as points, assists, rebounds, games played, shooting percentages, and more traditional statistics.
 
 ---
 
 ## Common Query Parameters
 
-For both Totals and Advanced endpoints, the following query parameters are available for the `/query` routes:
+Both endpoints support the following query parameters:
 
-- **playerName** *(string, optional)*: Filter results to players whose name matches or partially matches the provided string.
-- **season** *(int, optional)*: Filter by a specific season (e.g., `2025`).
-- **team** *(string, optional)*: Filter by a team abbreviation (partial matches allowed).
-- **playerId** *(string, optional)*: Filter by a player's unique ID (partial matches allowed).
+### Filtering Parameters
+- **season** *(integer, optional)*: Filter by a specific season (e.g., `2025`)
+- **team** *(string, optional)*: Filter by team abbreviation (e.g., `MIL`, `LAL`)
+- **playerId** *(string, optional)*: Filter by player's unique ID (e.g., `greenaj01`)
+- **isPlayoff** *(boolean, optional)*: Filter for playoff statistics (`true`) or regular season (`false`)
 
-**Sorting Options:**
+### Pagination Parameters
+- **page** *(integer, optional)*: Page number to retrieve (default: `1`)
+- **pageSize** *(integer, optional)*: Number of records per page (default: `20`)
 
-- **sortBy** *(string, optional)*: Field name to sort results by. Varies by endpoint.
-- **ascending** *(bool, optional)*: Set to `true` (default) for ascending order or `false` for descending order.
-
-**Pagination:**
-- **pageNumber** *(int, optional)*: Page number to retrieve (default is 1).
-- **pageSize** *(int, optional)*: Number of records per page (default is 10).
-
-If no data matches your query, the response will be `404 Not Found`.
+### Sorting Parameters
+- **sortBy** *(string, optional)*: Field name to sort results by (see endpoint-specific options below)
+- **ascending** *(boolean, optional)*: Sort order - `true` for ascending, `false` for descending (default: `false`)
 
 ---
 
-## Player Data Totals Endpoints
+## Player Advanced Stats Endpoint
 
-**Base Route:** `/playerdatatotals`
+**GET** `/api/playeradvancedstats`
 
-### 1. Query Player Totals
+Retrieve advanced player statistics with comprehensive filtering and sorting options.
 
-**GET** `/playerdatatotals/query`
+### Sorting Options for Advanced Stats
 
-**Description:**  
-Retrieves a filtered and/or sorted list of player totals data.
+The `sortBy` parameter accepts the following values:
+- `games` - Games played
+- `minutes_played` - Total minutes played
+- `ts_percent` - True Shooting Percentage
+- `total_rb_percent` - Total Rebound Percentage
+- `usage_percent` - Usage Percentage
+- `offensive_ws` - Offensive Win Shares
+- `defensive_ws` - Defensive Win Shares
+- `win_shares` - Total Win Shares (default)
+- `win_shares_per` - Win Shares per 48 minutes
+- `offensive_box` - Offensive Box Plus/Minus
+- `defensive_box` - Defensive Box Plus/Minus
+- `box` - Total Box Plus/Minus
+- `vorp` - Value Over Replacement Player
+- `season` - Season year
 
-**Query Parameters:**
-- `playerName` (string)
-- `season` (int)
-- `team` (string)
-- `playerId` (string)
-- `sortBy` (string): Can be `PlayerName`, `Season`, `Team`, `Points`, `Assists`, `Games`, `TotalRb`, `Blocks`, `Steals`.
-- `ascending` (bool): Default `true`.
-- `pageNumber` (int): Default `1`.
-- `pageSize` (int): Default `10`.
-
-**Response:**  
-`200 OK` with a JSON array of `PlayerDataTotals` objects, or `404 Not Found` if no records match.
-
-**Example Request:**
+### Example Request
 
 ```bash
 curl -X GET \
-  'http://rest.nbaapi.com/api/PlayerDataTotals/query?season=2025&team=BOS&sortBy=PlayerName&ascending=true&pageNumber=1&pageSize=10' \
-  -H 'accept: text/plain'
+  'https://api.server.nbaapi.com/api/playeradvancedstats?page=1&pageSize=20&sortBy=win_shares&ascending=false&season=2025&team=MIL' \
+  -H 'accept: application/json'
 ```
 
-**Example Response:**
+### Response Format
+
 ```json
-[
-  {
-    "id": 18905,
-    "playerName": "Al Horford",
-    "position": "C",
-    "age": 38,
-    "games": 19,
-    "gamesStarted": 18,
-    "minutesPg": 532,
-    "fieldGoals": 64,
-    "fieldAttempts": 137,
-    "fieldPercent": 0.467,
-    "threeFg": 41,
-    "threeAttempts": 101,
-    "threePercent": 0.406,
-    "twoFg": 23,
-    "twoAttempts": 36,
-    "twoPercent": 0.639,
-    "effectFgPercent": 0.617,
-    "ft": 6,
-    "ftAttempts": 6,
-    "ftPercent": 1,
-    "offensiveRb": 16,
-    "defensiveRb": 85,
-    "totalRb": 101,
-    "assists": 44,
-    "steals": 14,
-    "blocks": 17,
-    "turnovers": 19,
-    "personalFouls": 31,
-    "points": 175,
-    "team": "BOS",
-    "season": 2025,
-    "playerId": "horfoal01"
-  },
-  ...
-]
+{
+  "data": [
+    {
+      "id": 12345,
+      "playerName": "Giannis Antetokounmpo",
+      "position": "PF",
+      "age": 30,
+      "games": 65,
+      "minutesPlayed": 2205,
+      "per": 31.2,
+      "tsPercent": 0.614,
+      "threePAR": 0.156,
+      "ftr": 0.345,
+      "offensiveRBPercent": 11.2,
+      "defensiveRBPercent": 34.5,
+      "totalRBPercent": 22.8,
+      "assistPercent": 40.1,
+      "stealPercent": 1.8,
+      "blockPercent": 3.2,
+      "turnoverPercent": 16.7,
+      "usagePercent": 36.8,
+      "offensiveWS": 12.3,
+      "defensiveWS": 4.7,
+      "winShares": 17.0,
+      "winSharesPer": 0.370,
+      "offensiveBox": 8.9,
+      "defensiveBox": 2.1,
+      "box": 11.0,
+      "vorp": 9.2,
+      "team": "MIL",
+      "season": 2025,
+      "playerId": "antetgi01",
+      "isPlayoff": false
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "pageSize": 20,
+    "total": 450,
+    "pages": 23
+  }
+}
 ```
-
-*(Response truncated for brevity.)*
-
-### 2. Get Player Totals by Name
-
-**GET** `/playerdatatotals/name/{playerName}`
-
-**Description:**  
-Retrieve all totals data for players whose names match or partially match the given `playerName`.
-
-**Response:**  
-`200 OK` with a JSON array of `PlayerDataTotals` objects or `404 Not Found`.
-
-### 3. Get Player Totals by Season
-
-**GET** `/playerdatatotals/season/{season}`
-
-**Description:**  
-Retrieve all player totals for a given season.
-
-### 4. Get Player Totals by Player ID
-
-**GET** `/playerdatatotals/playerid/{playerId}`
-
-**Description:**  
-Retrieve all totals data for a player by their unique or partial `playerId`.
-
-### 5. Get Player Totals by Team
-
-**GET** `/playerdatatotals/team/{team}`
-
-**Description:**  
-Retrieve totals for all players who played on a given team.
-
-### 6. Count of All Player Totals Records
-
-**GET** `/playerdatatotals/count`
-
-**Description:**  
-Retrieve an integer count of all available player totals records.
 
 ---
 
-## Player Data Advanced Endpoints
+## Player Totals Endpoint
 
-**Base Route:** `/playerdataadvanced`
+**GET** `/api/playertotals`
 
-### 1. Query Player Advanced Data
+Retrieve traditional player statistics including points, assists, rebounds, and shooting data.
 
-**GET** `/playerdataadvanced/query`
+### Sorting Options for Player Totals
 
-**Description:**  
-Retrieve a filtered and/or sorted list of advanced player stats.
+The `sortBy` parameter accepts the following values:
+- `games` - Games played
+- `minutes_pg` - Minutes per game
+- `three_fg` - Three-point field goals made
+- `three_attempts` - Three-point field goal attempts
+- `two_fg` - Two-point field goals made
+- `effect_fg_percent` - Effective Field Goal Percentage
+- `ft` - Free throws made
+- `total_rb` - Total rebounds
+- `assists` - Assists
+- `steals` - Steals
+- `blocks` - Blocks
+- `points` - Points scored
+- `season` - Season year
 
-**Query Parameters:**
-- `playerName` (string)
-- `season` (int)
-- `team` (string)
-- `playerId` (string)
-- `sortBy` (string): Possible fields include `PlayerName`, `Season`, `Team`, `Games`, `PER`, `TSPercent`, `TotalRBPercent`, `AssistPercent`, `StealPercent`, `BlockPercent`, `TurnoverPercent`, `UsagePercent`, `WinShares`, `Box`, `VORP`.
-- `ascending` (bool): Default `true`.
-- `pageNumber` (int): Default `1`.
-- `pageSize` (int): Default `10`.
+### Example Request
 
-**Response:**  
-`200 OK` with a JSON array of `PlayerDataAdvanced` objects, or `404 Not Found` if no records match.
-
-**Example Request:**
 ```bash
 curl -X GET \
-  'http://rest.nbaapi.com/api/PlayerDataAdvanced/query?playerName=James%20Harden&team=HOU&sortBy=WinShares&ascending=false&pageNumber=1&pageSize=10' \
-  -H 'accept: text/plain'
+  'https://api.server.nbaapi.com/api/playertotals?page=1&pageSize=20&sortBy=points&ascending=false&season=2025' \
+  -H 'accept: application/json'
 ```
 
-**Example Response:**
+### Response Format
+
 ```json
-[
-  {
-    "id": 5645,
-    "playerName": "James Harden",
-    "position": "SG",
-    "age": 25,
-    "games": 81,
-    "minutesPlayed": 2981,
-    "per": 26.7,
-    "tsPercent": 0.605,
-    "threePAR": 0.378,
-    "ftr": 0.561,
-    "offensiveRBPercent": 2.8,
-    "defensiveRBPercent": 14.2,
-    "totalRBPercent": 8.5,
-    "assistPercent": 34.6,
-    "stealPercent": 2.6,
-    "blockPercent": 1.6,
-    "turnoverPercent": 14.9,
-    "usagePercent": 31.3,
-    "offensiveWS": 12.2,
-    "defensiveWS": 4.2,
-    "winShares": 16.4,
-    "winSharesPer": 0.265,
-    "offensiveBox": 7,
-    "defensiveBox": 1.8,
-    "box": 8.8,
-    "vorp": 8.1,
-    "team": "HOU",
-    "season": 2015,
-    "playerId": "hardeja01"
-  },
-  ...
-]
+{
+  "data": [
+    {
+      "id": 67890,
+      "playerName": "Luka Doncic",
+      "position": "PG",
+      "age": 26,
+      "games": 70,
+      "gamesStarted": 70,
+      "minutesPg": 36.2,
+      "fieldGoals": 11.2,
+      "fieldAttempts": 23.1,
+      "fieldPercent": 0.485,
+      "threeFg": 4.1,
+      "threeAttempts": 11.3,
+      "threePercent": 0.363,
+      "twoFg": 7.1,
+      "twoAttempts": 11.8,
+      "twoPercent": 0.602,
+      "effectFgPercent": 0.574,
+      "ft": 7.8,
+      "ftAttempts": 9.2,
+      "ftPercent": 0.848,
+      "offensiveRb": 1.8,
+      "defensiveRb": 7.4,
+      "totalRb": 9.2,
+      "assists": 8.9,
+      "steals": 1.4,
+      "blocks": 0.5,
+      "turnovers": 4.1,
+      "personalFouls": 2.8,
+      "points": 34.3,
+      "team": "DAL",
+      "season": 2025,
+      "playerId": "doncilu01",
+      "isPlayoff": false
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "pageSize": 20,
+    "total": 500,
+    "pages": 25
+  }
+}
 ```
-
-*(Response truncated for brevity.)*
-
-### 2. Get Advanced Data by Player Name
-
-**GET** `/playerdataadvanced/name/{playerName}`
-
-**Description:**  
-Retrieve all advanced data for players whose names match or partially match `playerName`.
-
-### 3. Get Advanced Data by Season
-
-**GET** `/playerdataadvanced/season/{season}`
-
-**Description:**  
-Retrieve all advanced data for players in a given season.
-
-### 4. Get Advanced Data by Player ID
-
-**GET** `/playerdataadvanced/playerid/{playerId}`
-
-**Description:**  
-Retrieve advanced data by a player's unique or partial `playerId`.
-
-### 5. Get Advanced Data by Team
-
-**GET** `/playerdataadvanced/team/{team}`
-
-**Description:**  
-Retrieve advanced data for all players on a given team.
-
-### 6. Count of All Advanced Player Records
-
-**GET** `/playerdataadvanced/count`
-
-**Description:**  
-Retrieve the total count of all available advanced player records.
 
 ---
 
-## Responses
+## Response Codes
 
-- **200 OK**: Request successful; returns requested data.
-- **404 Not Found**: No matching records found.
-- **500 Internal Server Error**: Server encountered an error.
+- **200 OK**: Request successful; returns requested data
+- **400 Bad Request**: Invalid query parameters
+- **404 Not Found**: No matching records found
+- **500 Internal Server Error**: Server encountered an error
 
 ---
 
-## Example Requests
+## Usage Examples
 
-**Query Player Totals (Season 2025, Team BOS):**
+### Get Top Win Shares Leaders (Advanced Stats)
+
 ```bash
 curl -X GET \
-  'http://rest.nbaapi.com/api/PlayerDataTotals/query?season=2025&team=BOS&sortBy=PlayerName&ascending=true&pageNumber=1&pageSize=10' \
-  -H 'accept: text/plain'
+  'https://api.server.nbaapi.com/api/playeradvancedstats?page=1&pageSize=10&sortBy=win_shares&ascending=false&season=2025' \
+  -H 'accept: application/json'
 ```
 
-**Query Player Advanced (James Harden, Team HOU, Sorted by WinShares Desc):**
+### Get Leading Scorers (Player Totals)
+
 ```bash
 curl -X GET \
-  'http://rest.nbaapi.com/api/PlayerDataAdvanced/query?playerName=James%20Harden&team=HOU&sortBy=WinShares&ascending=false&pageNumber=1&pageSize=10' \
-  -H 'accept: text/plain'
+  'https://api.server.nbaapi.com/api/playertotals?page=1&pageSize=10&sortBy=points&ascending=false&season=2025' \
+  -H 'accept: application/json'
 ```
+
+### Get Boston Celtics Players Advanced Stats
+
+```bash
+curl -X GET \
+  'https://api.server.nbaapi.com/api/playeradvancedstats?team=BOS&season=2025&page=1&pageSize=20&sortBy=vorp&ascending=false' \
+  -H 'accept: application/json'
+```
+
+### Get Playoff Statistics
+
+```bash
+curl -X GET \
+  'https://api.server.nbaapi.com/api/playertotals?isPlayoff=true&season=2024&sortBy=points&ascending=false' \
+  -H 'accept: application/json'
+```
+
+---
+
+## Additional Resources
+
+- **Interactive Documentation**: [https://api.server.nbaapi.com/swagger/index.html](https://api.server.nbaapi.com/swagger/index.html)
+- **Postman Collection**: Use the "Run in Postman" button above
+- **Data Sources**: Statistics cross-referenced with Basketball Reference and NBA.com
 
 ---
 
 ## Contact & Support
 
-If you encounter any issues or have questions, please open an issue in this repository or contact me. 😊⛹️🏀🚀
+If you encounter any issues or have questions about the API, please open an issue in the repository or contact the development team. 🏀🚀
 
 ---
 
-You can view the full API documentation at http://rest.nbaapi.com/index.html
-
-
+**Note**: This API is currently in public beta. Features and endpoints may be updated based on user feedback and requirements.
