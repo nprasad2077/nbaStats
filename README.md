@@ -266,7 +266,7 @@ curl -X GET \
 
 ## Additional Resources
 
-- **Interactive Documentation**: [https://api.server.nbaapi.com/swagger/index.html](https://api.server.nbaapi.com/swagger/index.html)
+- **Interactive Documentation**: [https://api.server.nbaapi.com](https://api.server.nbaapi.com/swagger/index.html)
 - **Postman Collection**: Use the "Run in Postman" button above
 - **Data Sources**: Statistics cross-referenced with Basketball Reference and NBA.com
 
