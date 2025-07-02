@@ -1,7 +1,10 @@
 # NBA Stats API 2.0
 
 ## 🔎 View the Interactive API Documentation
-**[Interactive Swagger Documentation](https://api.server.nbaapi.com/swagger/index.html)** - Complete API reference with live testing capabilities
+**📜 [Interactive Swagger Documentation](https://api.server.nbaapi.com/swagger/index.html)** - Complete API reference with live testing capabilities
+---
+
+[<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://documenter.getpostman.com/view/25652688/2sB34Zs4xZ)
 
 ## Introduction
 
