@@ -221,6 +221,64 @@ curl -X GET \
 ```
 
 ---
+## Player Shot Chart Endpoint
+
+**GET** `/api/playershotchart`
+
+Retrieve shot chart data for a specific player. This endpoint is ideal for visualizing player shooting performance and can be filtered by game, season, shot type, and outcome.
+
+### Query Parameters for Shot Chart
+
+  - **playerId** *(string, optional)*: The player's unique ID (e.g., `hardeja01`).
+  - **season** *(integer, optional)*: Filter by a specific season (e.g., `2019`).
+  - **date** *(string, optional)*: Filter by a specific game date (e.g., `Dec 17, 2018`).
+  - **opponent** *(string, optional)*: Filter by the three-letter abbreviation for the opponent team (e.g., `UTA`).
+  - **qtr** *(string, optional)*: Filter by the quarter of the game (e.g., `1st Qtr`).
+  - **result** *(boolean, optional)*: Filter by shot outcome (`true` for made shots, `false` for missed).
+  - **shot\_type** *(string, optional)*: Filter by the type of shot (e.g., `2-pointer`, `3-pointer`).
+  - **page** *(integer, optional)*: Page number to retrieve (default: `1`). Note: The page size is fixed at 50 results.
+
+### Example Request
+
+```bash
+curl -X GET \
+  'https://api.server.nbaapi.com/api/playershotchart?playerId=hardeja01&date=Dec%2017%2C2018' \
+  -H 'accept: application/json'
+```
+
+### Response Format
+
+The response is an array of shot objects.
+
+```json
+[
+    {
+        "id": 510,
+        "playerId": "hardeja01",
+        "season": 2019,
+        "date": "Dec 17,2018",
+        "qtr": "1st Qtr",
+        "timeRemaining": "11:09",
+        "top": 305,
+        "left": 161,
+        "playerName": "hardeja01",
+        "result": false,
+        "shotType": "3-pointer",
+        "distanceFt": 26,
+        "lead": true,
+        "teamScore": 3,
+        "opponentTeamScore": 0,
+        "opponent": "UTA",
+        "team": "HOU",
+        "ID": 0,
+        "CreatedAt": "2025-06-20T22:48:34.764255Z",
+        "UpdatedAt": "2025-06-20T22:48:34.764255Z",
+        "DeletedAt": null
+    }
+]
+```
+
+-----
 
 ## Response Codes
 
