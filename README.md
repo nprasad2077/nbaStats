@@ -1,8 +1,6 @@
 # NBA Stats API 2.0
 
-## 🔎 View the Interactive API Documentation
-**📜 [Interactive Swagger Documentation](https://api.server.nbaapi.com/swagger/index.html)** - Complete API reference with live testing capabilities
----
+## [🔎 📜  View the Interactive API Documentation](https://api.server.nbaapi.com/) 
 
 [<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://documenter.getpostman.com/view/25652688/2sB34Zs4xZ)
 
@@ -12,7 +10,7 @@ This documentation provides comprehensive information for using the NBA Stats AP
 
 # NBA Player Statistics API
 
-This API provides endpoints to query NBA player statistics, including both "Totals" data and "Advanced" statistical data. Each endpoint supports filtering, sorting, and pagination options to help you retrieve exactly the data you need.
+This API provides endpoints to query NBA player statistics, including both "Totals" data, "Advanced" statistical data, and Player Shot Chart data. Each endpoint supports filtering, sorting, and pagination options to help you retrieve exactly the data you need.
 
 ## Base URL
 
