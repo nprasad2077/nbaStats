@@ -11,10 +11,32 @@ Hi Folks, stay tuned for new updated including much more advanced and refined pl
 
 Here is a small preview:
 
+
+
 <div align="center">
-<video src="https://github.com/user-attachments/assets/1e528ea9-7913-4e16-a33b-3251a0bb3c46" autoplay loop muted playsinline width="75%"></video>
+
+| API Responses |
+| :---: |
+| <img src="https://files.catbox.moe/sfi5z7.png" width="100%"> |
+| <img src="https://files.catbox.moe/ua8jmc.png" width="100%"> |
+| <img src="https://files.catbox.moe/no1mpw.png" width="100%"> |
+| <img src="https://files.catbox.moe/ol7sjl.png" width="100%"> |
+| <img src="https://files.catbox.moe/xi66gb.png" width="100%"> |
+
 </div>
-  
+
+<div align="center">
+
+## 📺 Video Preview
+
+<video src="https://github.com/user-attachments/assets/1e528ea9-7913-4e16-a33b-3251a0bb3c46" autoplay loop muted playsinline width="100%" type="video/mp4"></video>
+
+<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" height="4px" display="block">
+
+</div>
+
+---
+
 ## Introduction
 
 This documentation provides comprehensive information for using the NBA Stats API. The API offers access to NBA season and playoff statistics, including player totals, advanced metrics, and historical data. All statistics are cross-referenced with [basketball-reference.com](https://www.basketball-reference.com/) and [NBA.com](https://www.nba.com/stats).
