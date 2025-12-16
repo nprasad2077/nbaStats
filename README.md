@@ -11,8 +11,10 @@ Hi Folks, stay tuned for new updated including much more advanced and refined pl
 
 Here is a small preview:
 
-<video src="https://github.com/user-attachments/assets/1e528ea9-7913-4e16-a33b-3251a0bb3c46" autoplay loop muted playsinline width="100%"></video>
-
+<div align="center">
+<video src="https://github.com/user-attachments/assets/1e528ea9-7913-4e16-a33b-3251a0bb3c46" autoplay loop muted playsinline width="75%"></video>
+</div>
+  
 ## Introduction
 
 This documentation provides comprehensive information for using the NBA Stats API. The API offers access to NBA season and playoff statistics, including player totals, advanced metrics, and historical data. All statistics are cross-referenced with [basketball-reference.com](https://www.basketball-reference.com/) and [NBA.com](https://www.nba.com/stats).
