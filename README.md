@@ -2,7 +2,7 @@
 
 ## [🔎 📜  View the Interactive API Documentation](https://api.server.nbaapi.com/) 
 
-[<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://documenter.getpostman.com/view/25652688/2sB34Zs4xZ)
+[<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://solar-meadow-682296.docs.buildwithfern.com)
 
 
 # NEW DATA AVAILABLE SOON.
